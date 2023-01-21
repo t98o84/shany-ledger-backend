@@ -13,3 +13,8 @@ use Illuminate\Support\Facades\Route;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
+
+Route::name('auth.')->group(function () {
+    Route::post('sign-up', [\App\Http\Controllers\Auth\RegistrationController::class, 'signUpWithEmailAndPassword'])
+        ->name('sign-up-with-email-and-password');
+});
