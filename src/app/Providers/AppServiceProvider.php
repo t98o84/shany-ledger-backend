@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use App\Models\Auth\PersonalAccessToken;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Http\Resources\Json\JsonResource;
 use Laravel\Sanctum\Sanctum;
 
 class AppServiceProvider extends ServiceProvider
@@ -15,6 +16,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
+        JsonResource::withoutWrapping();
         Sanctum::ignoreMigrations();
         Sanctum::usePersonalAccessTokenModel(PersonalAccessToken::class);
     }

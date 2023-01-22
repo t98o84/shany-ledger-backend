@@ -32,7 +32,7 @@ class SignInWithEmailAndPasswordTest extends TestCase
         $this->assertIsString($token);
     }
 
-    public function testHandle_ValidData_SignedInEventDispached(): void
+    public function testHandle_ValidData_SignedInEventDispatched(): void
     {
         $user = User::factory()->create();
         $this->action->handle($user->email, 'password');

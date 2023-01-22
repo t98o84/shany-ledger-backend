@@ -2,19 +2,29 @@
 
 namespace App\Http\Controllers\Auth;
 
-use App\Actions\Auth\SignUpWithEmailAndPassword;
+use App\Actions\Auth\AuthErrorCode;
+use App\Actions\Auth\SignUpAndInWithEmailAndPassword;
+use App\Exceptions\ProblemDetails\BadRequestsErrorException;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Auth\SignUpWithEmailAndPasswordRequest;
+use App\Http\Requests\Auth\SignUpAndInWithEmailAndPasswordRequest;
 use App\Http\Resources\Auth\UserResource;
 
 class RegistrationController extends Controller
 {
-    public function signUpWithEmailAndPassword(SignUpWithEmailAndPasswordRequest $request, SignUpWithEmailAndPassword $signUp)
+    /**
+     * @throws \Throwable
+     */
+    public function signUpWithEmailAndPassword(SignUpAndInWithEmailAndPasswordRequest $request, SignUpAndInWithEmailAndPassword $signUpAndIn): \Illuminate\Http\JsonResponse
     {
-        $user = $signUp->handle($request->email, $request->password);
+        $userAndToken = $signUpAndIn->handle($request->email, $request->password);
 
-        return [
-            'user' => UserResource::make($user),
-        ];
+        if (is_a($userAndToken, AuthErrorCode::class)) {
+            throw new BadRequestsErrorException($userAndToken->value, __("error/auth/index.$userAndToken->value"));
+        }
+
+        return response()->json([
+            'user' => UserResource::make($userAndToken['user']),
+            'access_token' => $userAndToken['token'],
+        ], 201);
     }
 }
