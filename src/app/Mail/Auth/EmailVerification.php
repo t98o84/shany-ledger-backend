@@ -29,7 +29,7 @@ class EmailVerification extends Mailable implements ShouldQueue
     public function content(): Content
     {
         return new Content(
-            markdown: 'emails.auth.email-verification',
+            markdown: 'mail.auth.email-verification',
         );
     }
 
