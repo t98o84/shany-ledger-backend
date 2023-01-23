@@ -6,6 +6,9 @@ return [
 
     AuthErrorCode::SignUpEmailExists->value => 'メールアドレスが既に登録されています。',
 
-    AuthErrorCode::SignInFailed->value => 'メールアドレスもしくはパスワードに誤りがあります。'
+    AuthErrorCode::SignInFailed->value => 'メールアドレスもしくはパスワードに誤りがあります。',
 
+    AuthErrorCode::SendEmailVerificationNotificationUserNotExists->value => '指定されたユーザーが存在しません。',
+
+    AuthErrorCode::SendEmailVerificationNotificationEmailVerified->value => 'メールアドレスは既に検証済です。',
 ];

@@ -6,4 +6,6 @@ enum AuthErrorCode: string
 {
     case SignUpEmailExists = 'SignUpEmailExists';
     case SignInFailed = 'SignInFailed';
+    case SendEmailVerificationNotificationUserNotExists = 'SendEmailVerificationNotificationUserNotExists';
+    case SendEmailVerificationNotificationEmailVerified = 'SendEmailVerificationNotificationEmailVerified';
 }
