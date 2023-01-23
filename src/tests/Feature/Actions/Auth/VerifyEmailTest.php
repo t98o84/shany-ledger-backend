@@ -4,7 +4,9 @@ namespace Tests\Feature\Actions\Auth;
 
 use App\Actions\Auth\AuthErrorCode;
 use App\Actions\Auth\VerifyEmail;
+use App\Models\Shared\Signature;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
@@ -17,17 +19,30 @@ class VerifyEmailTest extends TestCase
     {
         $user = User::factory()->unverified()->create();
         $verifyEmail = new VerifyEmail();
+        $expiration = Carbon::now()->addMinutes(5);
+        $hash = sha1($user->email);
+        $signature = Signature::make([
+            'user' => $user->id,
+            'hash' => $hash,
+        ], $expiration);
 
-        $null = $verifyEmail->handle($user->id);
+        $true = $verifyEmail->handle($user->id, $hash, $expiration->getTimestamp(), $signature->signature);
 
-        $this->assertNull($null);
+        $this->assertTrue($true);
     }
 
     public function testHandle_UserNotExists_VerifyEmailUserNotExistsCodeReturned(): void
     {
+        $user = User::factory()->unverified()->make();
         $verifyEmail = new VerifyEmail();
+        $expiration = Carbon::now()->addMinutes(5);
+        $hash = sha1($user->email);
+        $signature = Signature::make([
+            'user' => $user->id,
+            'hash' => $hash,
+        ], $expiration);
 
-        $error = $verifyEmail->handle($this->faker->uuid());
+        $error = $verifyEmail->handle($user->id, $hash, $expiration->getTimestamp(), $signature->signature);
 
         $this->assertSame(AuthErrorCode::VerifyEmailUserNotExists, $error);
     }
@@ -36,9 +51,48 @@ class VerifyEmailTest extends TestCase
     {
         $user = User::factory()->create();
         $verifyEmail = new VerifyEmail();
+        $expiration = Carbon::now()->addMinutes(5);
+        $hash = sha1($user->email);
+        $signature = Signature::make([
+            'user' => $user->id,
+            'hash' => $hash,
+        ], $expiration);
 
-        $error = $verifyEmail->handle($user->id);
+
+        $error = $verifyEmail->handle($user->id, $hash, $expiration->getTimestamp(), $signature->signature);
 
         $this->assertSame(AuthErrorCode::VerifyEmailEmailVerified, $error);
+    }
+
+    public function testHandle_InvalidSignature_VerifyEmailInvalidSignatureCodeReturned(): void
+    {
+        $user = User::factory()->unverified()->create();
+        $verifyEmail = new VerifyEmail();
+        $expiration = Carbon::now()->addMinutes(5);
+        $hash = sha1($user->email);
+        $signature = Signature::make([
+            'user' => $user->id,
+            'hash' => $hash,
+        ], $expiration);
+
+        $error = $verifyEmail->handle($user->id, $hash, $expiration->clone()->addMinute()->getTimestamp(), $signature->signature);
+
+        $this->assertSame(AuthErrorCode::VerifyEmailInvalidSignature, $error);
+    }
+
+    public function testHandle_SignatureExpired_VerifyEmailInvalidSignatureCodeReturned(): void
+    {
+        $user = User::factory()->unverified()->create();
+        $verifyEmail = new VerifyEmail();
+        $expiration = Carbon::now()->subMinute();
+        $hash = sha1($user->email);
+        $signature = Signature::make([
+            'user' => $user->id,
+            'hash' => $hash,
+        ], $expiration);
+
+        $error = $verifyEmail->handle($user->id, $hash, $expiration->getTimestamp(), $signature->signature);
+
+        $this->assertSame(AuthErrorCode::VerifyEmailSignatureExpired, $error);
     }
 }

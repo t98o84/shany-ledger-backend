@@ -10,4 +10,6 @@ enum AuthErrorCode: string
     case SendEmailVerificationNotificationEmailVerified = 'SendEmailVerificationNotificationEmailVerified';
     case VerifyEmailUserNotExists = 'VerifyEmailUserNotExists';
     case VerifyEmailEmailVerified = 'VerifyEmailEmailVerified';
+    case VerifyEmailInvalidSignature = 'VerifyEmailInvalidSignature';
+    case VerifyEmailSignatureExpired = 'VerifyEmailSignatureExpired';
 }

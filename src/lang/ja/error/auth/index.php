@@ -15,4 +15,8 @@ return [
     AuthErrorCode::VerifyEmailUserNotExists->value => '指定されたユーザーが存在しません。',
 
     AuthErrorCode::VerifyEmailEmailVerified->value => 'メールアドレスは既に検証済です。',
+
+    AuthErrorCode::VerifyEmailInvalidSignature->value => '無効なリクエストです。',
+
+    AuthErrorCode::VerifyEmailSignatureExpired->value => 'リンクの有効期限が切れています。',
 ];

@@ -2,11 +2,13 @@
 
 namespace App\Actions\Auth;
 
+use App\Models\Shared\Signature;
 use App\Models\User;
+use Carbon\Carbon;
 
 class VerifyEmail
 {
-    public function handle(string $id): AuthErrorCode|null
+    public function handle(string $id, string $hash, int $expiration, string $signature): AuthErrorCode|true
     {
         $user = User::find($id);
 
@@ -18,8 +20,21 @@ class VerifyEmail
             return AuthErrorCode::VerifyEmailEmailVerified;
         }
 
+        $signatureModel = new Signature($signature, [
+            'user' => $id,
+            'hash' => $hash,
+        ], new Carbon($expiration));
+
+        if ($signatureModel->expired()) {
+            return AuthErrorCode::VerifyEmailSignatureExpired;
+        }
+
+        if (!$signatureModel->valid()) {
+            return AuthErrorCode::VerifyEmailInvalidSignature;
+        }
+
         $user->markEmailAsVerified();
 
-        return null;
+        return true;
     }
 }
