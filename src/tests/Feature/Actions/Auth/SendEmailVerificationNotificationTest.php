@@ -39,7 +39,7 @@ class SendEmailVerificationNotificationTest extends TestCase
         );
 
         $this->assertStringStartsWith(route('auth.user.verify-email', ['user' => $user->id]), $verificationUrl);
-        $this->assertEqualsCanonicalizing(['expires', 'hash', 'signature'], $queryKeys);
+        $this->assertEqualsCanonicalizing(['expiration', 'hash', 'signature'], $queryKeys);
     }
 
     public function testHandle_ValidData_MailQueued(): void
