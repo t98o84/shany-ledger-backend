@@ -14,7 +14,4 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::name('auth.')->group(function () {
-    Route::post('sign-up', [\App\Http\Controllers\Auth\RegistrationController::class, 'signUpWithEmailAndPassword'])
-        ->name('sign-up-with-email-and-password');
-});
+require 'api/auth/index.php';
