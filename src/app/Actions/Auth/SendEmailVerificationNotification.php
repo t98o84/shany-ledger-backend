@@ -22,19 +22,20 @@ class SendEmailVerificationNotification
             return AuthErrorCode::SendEmailVerificationNotificationEmailVerified;
         }
 
+        $hash = \Hash::make($user->name . $user->getEmailForVerification());
         $expiration = Carbon::now()->addMinutes(Config::get('auth.verification.expire', 60));
 
         $signature = Signature::make(
             [
                 'user' => $user->id,
-                'hash' => \Hash::make($user->name . $user->getEmailForVerification()),
+                'hash' => $hash,
             ],
             $expiration
         );
 
         $verificationUrl = route('auth.user.verify-email', [
             'user' => $user->id,
-            'hash' => \Hash::make($user->name . $user->getEmailForVerification()),
+            'hash' => $hash,
             'expiration' => $expiration->getTimestamp(),
             'signature' =>$signature->signature,
         ]);
