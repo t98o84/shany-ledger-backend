@@ -8,4 +8,6 @@ enum AuthErrorCode: string
     case SignInFailed = 'SignInFailed';
     case SendEmailVerificationNotificationUserNotExists = 'SendEmailVerificationNotificationUserNotExists';
     case SendEmailVerificationNotificationEmailVerified = 'SendEmailVerificationNotificationEmailVerified';
+    case VerifyEmailUserNotExists = 'VerifyEmailUserNotExists';
+    case VerifyEmailEmailVerified = 'VerifyEmailEmailVerified';
 }

@@ -11,4 +11,8 @@ return [
     AuthErrorCode::SendEmailVerificationNotificationUserNotExists->value => '指定されたユーザーが存在しません。',
 
     AuthErrorCode::SendEmailVerificationNotificationEmailVerified->value => 'メールアドレスは既に検証済です。',
+
+    AuthErrorCode::VerifyEmailUserNotExists->value => '指定されたユーザーが存在しません。',
+
+    AuthErrorCode::VerifyEmailEmailVerified->value => 'メールアドレスは既に検証済です。',
 ];
