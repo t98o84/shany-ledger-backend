@@ -1,8 +1,14 @@
 <?php
 
+//TODO: リクエスト数の制限追加
 Route::name('auth.')->group(function () {
     Route::post('/sign-up', [\App\Http\Controllers\Auth\RegistrationController::class, 'signUpWithEmailAndPassword'])
         ->name('sign-up-with-email-and-password');
+
+    Route::prefix('/reset-password')->group(function () {
+        Route::post('/', [\App\Http\Controllers\Auth\PasswordController::class, 'sendPasswordResetLink'])
+            ->name('send-password-reset-link');
+    });
 
     Route::prefix('/users')->name('user.')->group(function () {
         Route::prefix('/{user}')->group(function () {
