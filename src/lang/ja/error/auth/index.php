@@ -20,5 +20,5 @@ return [
 
     AuthErrorCode::VerifyEmailSignatureExpired->value => 'リンクの有効期限が切れています。',
 
-    AuthErrorCode::PasswordResetUserNotExists->value => 'メールアドレスに一致するユーザーは存在していません。',
+    AuthErrorCode::SendPasswordResetLinkUserNotExists->value => 'メールアドレスに一致するユーザーは存在していません。',
 ];

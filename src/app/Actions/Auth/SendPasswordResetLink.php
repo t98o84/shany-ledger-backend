@@ -13,7 +13,7 @@ class SendPasswordResetLink
         $user = User::where('email', $email)->first();
 
         if (is_null($user)) {
-            return AuthErrorCode::PasswordResetUserNotExists;
+            return AuthErrorCode::SendPasswordResetLinkUserNotExists;
         }
 
         PasswordResetRepository::find($email)?->delete();

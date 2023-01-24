@@ -43,13 +43,13 @@ class SendPasswordResetLinkTest extends TestCase
         \Mail::assertQueued(PasswordReset::class);
     }
 
-    public function testHandle_EmailNotExists_PasswordResetUserNotExistsCodeReturned(): void
+    public function testHandle_EmailNotExists_SendPasswordResetLinkUserNotExistsCodeReturned(): void
     {
         $user = User::factory()->make();
         $sendPasswordResetLink = new SendPasswordResetLink();
 
         $error = $sendPasswordResetLink->handle($user->email);
 
-        $this->assertSame(AuthErrorCode::PasswordResetUserNotExists, $error);
+        $this->assertSame(AuthErrorCode::SendPasswordResetLinkUserNotExists, $error);
     }
 }
