@@ -7,7 +7,8 @@ RUN apt update \
  && pecl install -o -f redis \
  && docker-php-ext-enable redis \
  && docker-php-ext-configure gd --with-freetype --with-jpeg \
- && docker-php-ext-install exif intl zip pdo_mysql gd \
+ && docker-php-ext-configure pcntl --enable-pcntl \
+ && docker-php-ext-install exif intl zip pdo_mysql gd pcntl \
  && a2enmod rewrite
 
 RUN echo "xdebug.mode=debug" >> $PHP_INI_DIR/conf.d/docker-php-ext-xdebug.ini && \
