@@ -28,6 +28,14 @@ services:
     ports:
       - "13306:3306"
 
+  redis:
+    image: redis:7.0-alpine3.17
+    volumes:
+      - redis-data:/data
+      - ./docker/redis/redis.conf:/usr/local/etc/redis/redis.conf
+    ports:
+      - "6379:6379"
+
   mail:
     image: mailhog/mailhog
     ports:
@@ -35,3 +43,4 @@ services:
 
 volumes:
   db-data:
+  redis-data:
