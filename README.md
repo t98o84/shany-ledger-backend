@@ -17,3 +17,8 @@ docker composer exec api php artisan ide-helper:models -N
 docker composer exec api php artisan ide-helper:meta
 docker composer exec api php artisan queue:listen
 ```
+
+TODO:
+- メールのレイアウト変更
+- メール送信にキューを使用するかしないか検討
+- そもそもキューを利用するかしないかを検討（色々大変そうなため）
