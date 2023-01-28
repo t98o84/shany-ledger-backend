@@ -39,6 +39,7 @@ class RecordRequestLogs
                 'method' => $request->getMethod(),
                 'ip' => $request->ip(),
                 'ips' => $request->ips(),
+                'referer' => $request->header('referer'),
                 'uri' => $request->getUri(),
                 'user_agent' => $request->userAgent(),
                 'locale' => $request->getLocale(),
