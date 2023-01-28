@@ -6,6 +6,9 @@ Route::name('auth.')->group(function () {
         ->name('sign-up-with-email-and-password');
     Route::post('/sign-in', [\App\Http\Controllers\Auth\AuthenticationController::class, 'signInWithEmailAndPassword'])
         ->name('sign-in-with-email-and-password');
+    Route::post('/sign-out', [\App\Http\Controllers\Auth\AuthenticationController::class, 'signOut'])
+        ->middleware(['auth:sanctum'])
+        ->name('sign-out');
 
     Route::prefix('/reset-password')->group(function () {
         Route::post('/', [\App\Http\Controllers\Auth\PasswordController::class, 'sendPasswordResetLink'])
