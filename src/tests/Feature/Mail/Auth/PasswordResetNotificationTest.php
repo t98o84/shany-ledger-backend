@@ -17,6 +17,7 @@ class PasswordResetNotificationTest extends TestCase
         parent::setUp();
 
         \Queue::fake();
+        \Queue::assertNothingPushed();
         \Mail::fake();
         \Mail::assertNothingSent();
     }
