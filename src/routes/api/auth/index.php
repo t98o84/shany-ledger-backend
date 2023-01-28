@@ -4,6 +4,8 @@
 Route::name('auth.')->group(function () {
     Route::post('/sign-up', [\App\Http\Controllers\Auth\RegistrationController::class, 'signUpWithEmailAndPassword'])
         ->name('sign-up-with-email-and-password');
+    Route::post('/sign-in', [\App\Http\Controllers\Auth\AuthenticationController::class, 'signInWithEmailAndPassword'])
+        ->name('sign-in-with-email-and-password');
 
     Route::prefix('/reset-password')->group(function () {
         Route::post('/', [\App\Http\Controllers\Auth\PasswordController::class, 'sendPasswordResetLink'])

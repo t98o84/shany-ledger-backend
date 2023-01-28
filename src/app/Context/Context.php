@@ -26,4 +26,9 @@ class Context
         }
         return static::$requestId;
     }
+
+    public static function hasRequestId(): bool
+    {
+        return !is_null(static::$requestId);
+    }
 }

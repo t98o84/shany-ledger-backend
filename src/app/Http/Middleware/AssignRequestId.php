@@ -10,8 +10,11 @@ class AssignRequestId
 {
     public function handle(Request $request, Closure $next)
     {
-        $requestId = (string) \Str::orderedUuid();
-        Context::initRequestId($requestId);
+        if (!Context::hasRequestId()) {
+            $requestId = (string) \Str::orderedUuid();
+            Context::initRequestId($requestId);
+        }
+
 
         return $next($request);
     }
