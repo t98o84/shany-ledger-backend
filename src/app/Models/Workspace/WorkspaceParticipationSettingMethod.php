@@ -13,5 +13,10 @@ enum WorkspaceParticipationSettingMethod: string
 
     case Invitation = 'Invitation';
 
-    case NoParticipation = 'NoParticipation';
+    case DisableParticipation = 'DisableParticipation';
+
+    public static function default(): self
+    {
+        return self::Invitation;
+    }
 }

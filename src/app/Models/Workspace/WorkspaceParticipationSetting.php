@@ -13,6 +13,8 @@ class WorkspaceParticipationSetting extends Model
 
     protected $keyType = 'string';
 
+    protected $primaryKey = 'workspace_id';
+
     public const CREATED_AT = null;
 
     protected $guarded = [];

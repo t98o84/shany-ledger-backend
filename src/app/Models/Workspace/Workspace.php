@@ -14,4 +14,11 @@ class Workspace extends Model
     protected $keyType = 'string';
 
     protected $guarded = [];
+
+    public const BASE_FILE_PATH = '/workspace';
+
+    public static function buildFilePath(string $id): string
+    {
+        return static::BASE_FILE_PATH . "/$id";
+    }
 }

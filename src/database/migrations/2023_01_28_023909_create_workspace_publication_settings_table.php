@@ -13,7 +13,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('workspace_publish_settings', function (Blueprint $table) {
+        Schema::create('workspace_publication_settings', function (Blueprint $table) {
             $table->uuid('workspace_id')->primary();
             $table->string('state');
             $table->timestamp('updated_at');
@@ -29,6 +29,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('workspace_publish_settings');
+        Schema::dropIfExists('workspace_publication_settings');
     }
 };
