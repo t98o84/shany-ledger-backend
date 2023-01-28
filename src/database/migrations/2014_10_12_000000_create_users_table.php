@@ -16,12 +16,14 @@ return new class extends Migration
         Schema::create('users', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->string('name');
-            $table->string('email')->unique()->nullable();
-            $table->string('deleted_email')->nullable()->default(null)->comment('論理削除した場合にemail絡むをnullにしここに保存する');
+            $table->string('email');
+            $table->boolean('valid_email')->nullable()->default(1)->comment('論理削除した場合にこのカラムをnullにし同一のメールアドレスで登録できるようにするためのカラム');
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->timestamps();
             $table->softDeletes();
+
+            $table->unique(['email', 'valid_email']);
         });
     }
 
