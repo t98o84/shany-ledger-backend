@@ -15,15 +15,16 @@ return new class extends Migration
     {
         Schema::create('workspaces', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->uuid('user_id')->comment('Owner id');
+            $table->uuid('owner_id');
             $table->string('url')->unique();
             $table->string('name');
-            $table->string('icon')->nullable();
+            $table->string('icon_id')->nullable();
             $table->string('description')->nullable();
             $table->timestamps();
             $table->softDeletes();
 
             $table->foreign('owner_id')->references('id')->on('users');
+            $table->foreign('icon_id')->references('id')->on('files');
         });
     }
 

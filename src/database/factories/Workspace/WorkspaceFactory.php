@@ -20,7 +20,7 @@ class WorkspaceFactory extends Factory
             'id' => (string) \Str::orderedUuid(),
             'url' => \Str::random(fake()->numberBetween(3, 16)),
             'name' => fake()->name(),
-            'icon' => null,
+            'icon_id' => null,
             'description' => fake()->realText(50)
         ];
     }
