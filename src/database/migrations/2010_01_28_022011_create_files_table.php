@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('name');
             $table->string('original_name')->nullable();
             $table->string('size');
-            $table->string('mime');
+            $table->string('mime_type');
             $table->timestamps();
         });
     }
