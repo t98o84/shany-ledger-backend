@@ -4,6 +4,7 @@ namespace App\Actions\Auth;
 
 enum AuthErrorCode: string
 {
+    case UserNotExists = 'UserNotExists';
     case SignUpEmailExists = 'SignUpEmailExists';
     case SignInFailed = 'SignInFailed';
     case SendEmailVerificationNotificationUserNotExists = 'SendEmailVerificationNotificationUserNotExists';
