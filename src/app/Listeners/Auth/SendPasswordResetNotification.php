@@ -14,18 +14,18 @@ class SendPasswordResetNotification implements ShouldQueue
 
     public int $tries = 5;
 
-    public function __construct(private readonly PasswordReset $event)
+
+    public function handle(PasswordReset $event): void
     {
+        \Mail::send(new PasswordResetNotification($event->user));
     }
 
-    public function handle(): void
+    public function failed(PasswordReset $event, \Throwable $exception): void
     {
-        \Mail::send(PasswordResetNotification::class);
-    }
-
-    public function failed(\Throwable $exception): void
-    {
-        \Log::error($exception);
+        \Log::error($exception->getMessage(), [
+            'user_id' => $event->user->id,
+            'exception' => $exception
+        ]);
     }
 
     public function backoff(): array

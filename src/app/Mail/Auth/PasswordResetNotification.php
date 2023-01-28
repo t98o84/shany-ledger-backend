@@ -32,7 +32,7 @@ class PasswordResetNotification extends Mailable implements ShouldQueue
     public function content(): Content
     {
         return new Content(
-            view: 'mail.auth.password-reset-notification',
+            markdown: 'mail.auth.password-reset-notification',
         );
     }
 

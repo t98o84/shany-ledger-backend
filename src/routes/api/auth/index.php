@@ -8,6 +8,8 @@ Route::name('auth.')->group(function () {
     Route::prefix('/reset-password')->group(function () {
         Route::post('/', [\App\Http\Controllers\Auth\PasswordController::class, 'sendPasswordResetLink'])
             ->name('send-password-reset-link');
+        Route::put('/', [\App\Http\Controllers\Auth\PasswordController::class, 'resetPassword'])
+            ->name('reset-password');
     });
 
     Route::prefix('/users')->name('user.')->group(function () {
