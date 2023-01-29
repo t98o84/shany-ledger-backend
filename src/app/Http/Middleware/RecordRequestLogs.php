@@ -36,6 +36,7 @@ class RecordRequestLogs
             ],
             'request' => [
                 'id' => Context::requestId(),
+                'client_id' => Context::clientId(),
                 'method' => $request->getMethod(),
                 'ip' => $request->ip(),
                 'ips' => $request->ips(),
