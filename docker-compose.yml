@@ -12,6 +12,22 @@ services:
       - "8000:80"
     depends_on:
       - db
+      - redis
+      - mail
+
+  queue-worker:
+    build:
+      context: .
+      dockerfile: ./docker/api/Dockerfile
+    command: ["php", "artisan", "horizon"]
+    volumes:
+      - ./src:/var/www/html
+      - ./docker/api/000-default.conf:/etc/apache2/sites-available/000-default.conf:ro
+    ports:
+      - "8080:80"
+    depends_on:
+      - db
+      - redis
       - mail
 
   db:

@@ -15,7 +15,6 @@ docker composer exec api php artisan migrate
 docker composer exec api php artisan ide-helper:generate
 docker composer exec api php artisan ide-helper:models -N
 docker composer exec api php artisan ide-helper:meta
-docker composer exec api php artisan queue:listen
 ```
 
 TODO:
