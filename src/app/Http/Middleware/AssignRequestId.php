@@ -10,12 +10,16 @@ class AssignRequestId
 {
     public function handle(Request $request, Closure $next)
     {
+        $requestId = $request->cookie('request_id', (string) \Str::orderedUuid());
+
         if (!Context::hasRequestId()) {
-            $requestId = (string) \Str::orderedUuid();
             Context::initRequestId($requestId);
         }
 
+        $response = $next($request);
 
-        return $next($request);
+        $response->cookie('request_id', (string) \Str::orderedUuid());
+
+        return $response;
     }
 }
