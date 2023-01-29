@@ -29,6 +29,7 @@ class RecordRequestLogs
     private function record(Request $request, $response): void
     {
         // TODO: 項目を精査
+        // TODO: ヘルスチャックやローカルホストなどのリクエストは記録しないようにする
         $context = [
             'id' => (string)\Str::orderedUuid(),
             'user' => [
