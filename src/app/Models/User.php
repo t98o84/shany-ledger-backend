@@ -3,6 +3,7 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Models\Shared\File;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -18,6 +19,7 @@ class User extends Authenticatable
 
     protected $keyType = 'string';
 
+    public const BASE_FILE_PATH = '/user';
 
     /**
      * The attributes that are mass assignable.
@@ -49,6 +51,15 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
+    protected $with = [
+        'avatar',
+    ];
+
+    public function avatar(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(File::class, 'avatar_id');
+    }
+
     public static function hashPassword(string $password): string
     {
         return Hash::make($password);
@@ -59,4 +70,8 @@ class User extends Authenticatable
         return Hash::check($rawPassword, $this->password);
     }
 
+    public static function buildFilePath(string $id): string
+    {
+        return static::BASE_FILE_PATH . "/$id";
+    }
 }

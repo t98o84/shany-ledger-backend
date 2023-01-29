@@ -4,6 +4,7 @@ namespace App\Listeners\Auth;
 
 use App\Actions\Auth\AuthErrorCode;
 use App\Events\Auth\SignedUp;
+use App\Events\Auth\UnverifiedEmail;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
 use \App\Actions\Auth\SendEmailVerificationNotification as SendEmailVerificationNotificationAction;
@@ -18,7 +19,7 @@ class SendEmailVerificationNotification implements ShouldQueue
     {
     }
 
-    public function handle(SignedUp $event): void
+    public function handle(SignedUp|UnverifiedEmail $event): void
     {
         $verificationUrl = $this->sendEmailVerificationNotification->handle($event->user->id);
 

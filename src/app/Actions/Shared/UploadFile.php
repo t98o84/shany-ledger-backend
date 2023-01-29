@@ -9,6 +9,7 @@ use Illuminate\Http\UploadedFile;
 class UploadFile
 {
     /**
+     * TODO: EXIFの削除処理追加
      * @throws \Throwable
      */
     public function handle(UploadedFile $file, string $path = '/', string $disk = null): File|FileErrorCode
