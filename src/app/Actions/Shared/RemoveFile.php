@@ -7,7 +7,7 @@ use App\Events\Shared\RemovedFile;
 
 class RemoveFile
 {
-    public function handle(string $id, string $path = '/', string $disk = null, bool $withDirectory = false): true|FileErrorCode
+    public function handle(string $id, bool $withDirectory = false): true|FileErrorCode
     {
         $file = File::find($id);
 
@@ -15,15 +15,9 @@ class RemoveFile
             return FileErrorCode::FileNotExists;
         }
 
-        $storageDisk = $disk ?? config('filesystems.default');
-
-        if (!is_string($storageDisk)) {
-            throw new \LogicException('デフォルトディスクの取得に失敗しました。');
-        }
-
         $result = $withDirectory
-            ? \Storage::disk($storageDisk)->deleteDirectory($path)
-            : \Storage::disk($storageDisk)->delete("$path/$file->name");
+            ? \Storage::disk($file->disk)->deleteDirectory(dirname($file->path))
+            : \Storage::disk($file->disk)->delete($file->path);
 
         if (!$result) {
             return FileErrorCode::RemoveFileFailed;
@@ -31,7 +25,7 @@ class RemoveFile
 
         $file->delete();
 
-        RemovedFile::dispatch($file, $path, $storageDisk, $withDirectory);
+        RemovedFile::dispatch($file, $file->path, $file->disk, $withDirectory);
 
         return true;
     }

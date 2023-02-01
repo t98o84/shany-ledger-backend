@@ -7,6 +7,7 @@ use App\Actions\Shared\UploadFile;
 use App\Events\Shared\RemovedFile;
 use \App\Events\Shared\UploadedFile as UploadedFileEvent;
 use App\Models\Shared\File;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Http\UploadedFile;
@@ -35,9 +36,7 @@ class RemoveFileTest extends TestCase
      */
     public function testHandle_ValidData_TrueReturned(): void
     {
-        $uploadedFile = UploadedFile::fake()->create('test');
-        $file = $this->uploadFile->handle($uploadedFile);
-
+        $file = File::factory()->for(User::factory(), 'fileable')->create();
         $true = $this->removeFile->handle($file->id);
 
         $this->assertTrue($true);
@@ -48,8 +47,7 @@ class RemoveFileTest extends TestCase
      */
     public function testHandle_ValidData_RemovedFileEventDispatched(): void
     {
-        $uploadedFile = UploadedFile::fake()->create('test');
-        $file = $this->uploadFile->handle($uploadedFile);
+        $file = File::factory()->for(User::factory(), 'fileable')->create();
 
         $this->removeFile->handle($file->id);
 
@@ -62,12 +60,15 @@ class RemoveFileTest extends TestCase
     public function testHandle_ValidData_FileMissing(): void
     {
         $uploadedFile = UploadedFile::fake()->create('test');
-        $file = $this->uploadFile->handle($uploadedFile);
+        $path = \Storage::putFile('/', $uploadedFile);
+        $file = File::factory()->for(User::factory(), 'fileable')->create(['path' => $path]);
+
+        \Storage::assertExists($file->path);
 
         $this->removeFile->handle($file->id);
 
-        \Storage::assertMissing("/$file->name");
-        $this->assertNull(File::find($file->id));
+        \Storage::assertMissing($file->path);
+        $this->assertDatabaseEmpty(File::class);
     }
 
     /**
@@ -76,11 +77,14 @@ class RemoveFileTest extends TestCase
     public function testHandle_WithDirectory_DirectoryRemoved(): void
     {
         $uploadedFile = UploadedFile::fake()->create('test');
-        $file = $this->uploadFile->handle($uploadedFile, '/dir1');
+        $path = \Storage::putFile('/dir1', $uploadedFile);
+        $file = File::factory()->for(User::factory(), 'fileable')->create(['path' => $path]);
 
-        $this->removeFile->handle($file->id, '/dir1', null, true);
+        \Storage::assertExists($file->path);
+
+        $this->removeFile->handle($file->id, true);
 
         \Storage::assertMissing("/dir1");
-        $this->assertNull(File::find($file->id));
+        $this->assertDatabaseEmpty(File::class);
     }
 }
