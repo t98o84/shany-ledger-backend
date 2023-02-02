@@ -3,6 +3,8 @@
 use App\Actions\Auth\AuthErrorCode;
 
 return [
+    AuthErrorCode::InvalidRequest->value => '権限がありません。',
+
     AuthErrorCode::InvalidRequest->value => '無効なリクエストです。',
 
     AuthErrorCode::SignUpEmailExists->value => 'メールアドレスが既に登録されています。',

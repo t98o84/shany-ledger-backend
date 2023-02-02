@@ -33,12 +33,8 @@ class UpdateUserProfileTest extends TestCase
         parent::setUp();
 
         \Event::fake();
-        \Event::assertNothingDispatched();
         \Storage::fake();
-        $this->action = new UpdateUserProfile(
-            new UploadFile(),
-            new RemoveFile(),
-        );
+        $this->action = new UpdateUserProfile();
     }
 
     /**
@@ -47,7 +43,6 @@ class UpdateUserProfileTest extends TestCase
     public function testHandle_ValidData_ProfileUpdated(): void
     {
         $user = User::factory()->create();
-        $avatar = UploadedFile::fake()->image('avatar');
         Sanctum::actingAs($user);
 
         $true = $this->action->handle($user->id, "update $user->name", "update-$user->email");
@@ -56,62 +51,6 @@ class UpdateUserProfileTest extends TestCase
         $this->assertTrue($true);
         $this->assertSame("update $user->name", $updatedUser->name);
         $this->assertSame("update-$user->email", $updatedUser->email);
-    }
-
-    /**
-     * @throws \Throwable
-     */
-    public function testHandle_UploadAvatar_AvatarUpdated(): void
-    {
-        $user = User::factory()->create();
-        $avatar = UploadedFile::fake()->image('avatar');
-        Sanctum::actingAs($user);
-
-        $this->action->handle($user->id, $user->name, $user->email, false, $avatar);
-        $updatedUser = User::find($user->id);
-
-        $this->assertTrue(\Str::isUuid($updatedUser->avatar_id));
-        \Storage::assertExists(User::buildFilePath($updatedUser->id) . "/{$updatedUser->avatar->name}");
-    }
-
-    /**
-     * @throws \Throwable
-     */
-    public function testHandle_RemoveAvatar_AvatarRemoved(): void
-    {
-        $user = User::factory()->create();
-        $avatar = UploadedFile::fake()->image('avatar');
-        Sanctum::actingAs($user);
-
-        $this->action->handle($user->id, $user->name, $user->email, false, $avatar);
-        $avatarName = User::find($user->id)->avatar->name;
-
-        $this->action->handle($user->id, $user->name, $user->email, true);
-        $updatedUser = User::find($user->id);
-
-        $this->assertNull($updatedUser->avatar_id);
-        \Storage::assertMissing(User::buildFilePath($updatedUser->id) . "/{$avatarName}");
-    }
-
-    /**
-     * @throws \Throwable
-     */
-    public function testHandle_RemoveAndUploadAvatar_AvatarUpdated(): void
-    {
-        $user = User::factory()->create();
-        $avatar = UploadedFile::fake()->image('avatar');
-        Sanctum::actingAs($user);
-
-        $this->action->handle($user->id, $user->name, $user->email, false, $avatar);
-        $oldAvatarId = User::find($user->id)->avatar_id;
-
-        $newAvatar = UploadedFile::fake()->image('avatar');
-        $this->action->handle($user->id, $user->name, $user->email, true, $newAvatar);
-        $updatedUser = User::find($user->id);
-
-        $this->assertNotSame($oldAvatarId, $updatedUser->avatar_id);
-        $this->assertTrue(\Str::isUuid($updatedUser->avatar_id));
-        \Storage::assertExists(User::buildFilePath($updatedUser->id) . "/{$updatedUser->avatar->name}");
     }
 
     /**
@@ -157,14 +96,26 @@ class UpdateUserProfileTest extends TestCase
     /**
      * @throws \Throwable
      */
-    public function testHandle_UpdateTheProfileOfANonAuthenticatingUser_InvalidRequestCodeReturned(): void
+    public function testHandle_AnotherUser_ForbiddenCodeReturned(): void
     {
         $user = User::factory()->create();
-        $unauthorizedUser = User::factory()->create();
+        $anotherUse = User::factory()->create();
         Sanctum::actingAs($user);
 
-        $error = $this->action->handle($unauthorizedUser->id,  $unauthorizedUser->name, $unauthorizedUser->email);
+        $error = $this->action->handle($anotherUse->id,  $anotherUse->name, $anotherUse->email);
 
-        $this->assertSame(AuthErrorCode::InvalidRequest, $error);
+        $this->assertSame(AuthErrorCode::Forbidden, $error);
+    }
+
+    /**
+     * @throws \Throwable
+     */
+    public function testHandle_Unauthenticated_ForbiddenCodeReturned(): void
+    {
+        $user = User::factory()->create();
+
+        $error = $this->action->handle($user->id,  $user->name, $user->email);
+
+        $this->assertSame(AuthErrorCode::Forbidden, $error);
     }
 }

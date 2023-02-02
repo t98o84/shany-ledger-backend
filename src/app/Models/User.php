@@ -55,9 +55,9 @@ class User extends Authenticatable
         'avatar',
     ];
 
-    public function avatar(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    public function avatar(): \Illuminate\Database\Eloquent\Relations\HasOne
     {
-        return $this->belongsTo(File::class, 'avatar_id');
+        return $this->hasOne(UserAvatar::class);
     }
 
     public static function hashPassword(string $password): string

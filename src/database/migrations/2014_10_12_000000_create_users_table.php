@@ -20,12 +20,10 @@ return new class extends Migration
             $table->boolean('valid_email')->nullable()->default(1)->comment('論理削除した場合にこのカラムをnullにし同一のメールアドレスで登録できるようにするためのカラム');
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
-            $table->string('avatar_id')->nullable();
             $table->timestamps();
             $table->softDeletes();
 
             $table->unique(['email', 'valid_email']);
-            $table->foreign('avatar_id')->references('id')->on('files')->onDelete('set null');
         });
     }
 

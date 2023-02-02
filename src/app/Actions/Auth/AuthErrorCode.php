@@ -4,6 +4,7 @@ namespace App\Actions\Auth;
 
 enum AuthErrorCode: string
 {
+    case Forbidden = 'Forbidden';
     case InvalidRequest = 'InvalidRequest';
     case UserNotExists = 'UserNotExists';
     case SignUpEmailExists = 'SignUpEmailExists';
@@ -17,4 +18,9 @@ enum AuthErrorCode: string
     case SendPasswordResetLinkUserNotExists = 'SendPasswordResetLinkUserNotExists';
     case ResetPasswordInvalidRequest = 'ResetPasswordInvalidRequest';
     case ResetPasswordTokenExpired = 'ResetPasswordTokenExpired';
+
+    public function message(): string
+    {
+        return __("error/auth/index.$this->value");
+    }
 }
