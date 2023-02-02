@@ -13,4 +13,9 @@ enum FileErrorCode: string
     case FailedToGetFileSize = 'FailedToGetFileSize';
 
     case RemoveFileFailed = 'RemoveFileFailed';
+
+    public function message(): string
+    {
+        return __("error/shared/file.$this->value");
+    }
 }

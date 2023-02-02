@@ -7,6 +7,7 @@ enum AuthErrorCode: string
     case Forbidden = 'Forbidden';
     case InvalidRequest = 'InvalidRequest';
     case UserNotExists = 'UserNotExists';
+    case FileUploadFailed = 'FileUploadFailed';
     case SignUpEmailExists = 'SignUpEmailExists';
     case SignInFailed = 'SignInFailed';
     case SendEmailVerificationNotificationUserNotExists = 'SendEmailVerificationNotificationUserNotExists';
