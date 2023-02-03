@@ -8,7 +8,7 @@ use App\Models\User;
 
 class UpdateUserProfile
 {
-    public function handle(string $id, string $name, string $email): true|AuthErrorCode
+    public function handle(string $id, string $name, string $email): User|AuthErrorCode
     {
         $user = User::find($id);
 
@@ -34,6 +34,6 @@ class UpdateUserProfile
             UnverifiedEmail::dispatch($user);
         }
 
-        return true;
+        return $user;
     }
 }

@@ -45,10 +45,9 @@ class UpdateUserProfileTest extends TestCase
         $user = User::factory()->create();
         Sanctum::actingAs($user);
 
-        $true = $this->action->handle($user->id, "update $user->name", "update-$user->email");
-        $updatedUser = User::find($user->id);
+        $updatedUser = $this->action->handle($user->id, "update $user->name", "update-$user->email");
 
-        $this->assertTrue($true);
+        $this->assertInstanceOf(User::class, $updatedUser);
         $this->assertSame("update $user->name", $updatedUser->name);
         $this->assertSame("update-$user->email", $updatedUser->email);
     }
@@ -66,6 +65,18 @@ class UpdateUserProfileTest extends TestCase
         \Event::assertDispatched(UpdatedUserProfile::class);
     }
 
+    /**
+     * @throws \Throwable
+     */
+    public function testHandle_UpdateEmail_EmailUnverified(): void
+    {
+        $user = User::factory()->create();
+        Sanctum::actingAs($user);
+
+        $updatedUser = $this->action->handle($user->id,  $user->name, "update-$user->email");
+
+        $this->assertNull($updatedUser->email_verified_at);
+    }
 
     /**
      * @throws \Throwable
