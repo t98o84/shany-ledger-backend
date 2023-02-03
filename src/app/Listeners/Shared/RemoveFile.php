@@ -4,12 +4,15 @@ namespace App\Listeners\Shared;
 
 use App\Events\Shared\OverwrittenFile;
 use App\Jobs\ExponentialBackoff;
+use App\Jobs\Queue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
 
 class RemoveFile implements ShouldQueue
 {
     use InteractsWithQueue;
+
+    public string $queue = Queue::Files->value;
 
     public int $tries = 5;
 

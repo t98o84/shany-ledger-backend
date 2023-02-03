@@ -3,6 +3,7 @@
 namespace App\Mail\Auth;
 
 use App\Jobs\ExponentialBackoff;
+use App\Jobs\Queue;
 use App\Models\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -19,6 +20,7 @@ class PasswordResetNotification extends Mailable implements ShouldQueue
 
     public function __construct(public User $user)
     {
+        $this->onQueue(Queue::Notifications->value);
     }
 
     public function envelope(): Envelope

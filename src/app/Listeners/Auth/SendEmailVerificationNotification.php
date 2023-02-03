@@ -5,6 +5,7 @@ namespace App\Listeners\Auth;
 use App\Actions\Auth\AuthErrorCode;
 use App\Events\Auth\SignedUp;
 use App\Events\Auth\UnverifiedEmail;
+use App\Jobs\Queue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
 use \App\Actions\Auth\SendEmailVerificationNotification as SendEmailVerificationNotificationAction;
@@ -12,6 +13,8 @@ use \App\Actions\Auth\SendEmailVerificationNotification as SendEmailVerification
 class SendEmailVerificationNotification implements ShouldQueue
 {
     use InteractsWithQueue;
+
+    public string $queue = Queue::Notifications->value;
 
     public int $tries = 3;
 
@@ -29,7 +32,7 @@ class SendEmailVerificationNotification implements ShouldQueue
         }
     }
 
-    public function failed(SignedUp $event, $exception): void
+    public function failed(SignedUp|UnverifiedEmail $event, $exception): void
     {
         // 失敗したとしてもユーザーが手動で再送信を行うようにするため
         // ここでは特に何もしない

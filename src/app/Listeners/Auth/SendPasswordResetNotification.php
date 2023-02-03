@@ -4,6 +4,7 @@ namespace App\Listeners\Auth;
 
 use App\Events\Auth\PasswordReset;
 use App\Jobs\ExponentialBackoff;
+use App\Jobs\Queue;
 use App\Mail\Auth\PasswordResetNotification;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
@@ -11,6 +12,8 @@ use Illuminate\Queue\InteractsWithQueue;
 class SendPasswordResetNotification implements ShouldQueue
 {
     use InteractsWithQueue;
+
+    public string $queue = Queue::Notifications->value;
 
     public int $tries = 5;
 
