@@ -3,7 +3,6 @@
 namespace App\Actions\Auth;
 
 use App\Actions\Shared\FileErrorCode;
-use App\Actions\Shared\RemoveFile;
 use App\Actions\Shared\UploadFile;
 use App\Models\User;
 use App\Models\UserAvatar;

@@ -5,6 +5,7 @@ namespace Tests\Feature\Controllers\Auth;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Testing\Fluent\AssertableJson;
 use Laravel\Sanctum\Sanctum;
 use Tests\TestCase;
@@ -79,6 +80,58 @@ class UserProfileControllerTest extends TestCase
         $response = $this->patchJson(route('auth.user.update-profile', ['user' => $otherUser->id]), [
             'email' => $authenticatedUser->email,
             'name' => $authenticatedUser->name,
+        ]);
+
+        $response->assertForbidden();
+    }
+
+    public function testUpdateAvatar_ValidData_AvatarUrlResponse(): void
+    {
+        $user = User::factory()->create();
+        Sanctum::actingAs($user);
+
+        $response = $this->putJson(route('auth.user.update-avatar', ['user' => $user->id]), [
+            'avatar' => UploadedFile::fake()->image('new-avatar.jpg'),
+        ]);
+
+        $response
+            ->assertOK()
+            ->assertJson(fn(AssertableJson $json) => $json
+                ->whereType('avatar', 'string')
+            );
+    }
+
+    public function testUpdateAvatar_NotImageFile_BadRequestResponse(): void
+    {
+        $user = User::factory()->create();
+        Sanctum::actingAs($user);
+
+        $response = $this->putJson(route('auth.user.update-avatar', ['user' => $user->id]), [
+            'avatar' => UploadedFile::fake()->create('new-avatar.txt'),
+        ]);
+
+        $response
+            ->assertStatus(400)
+            ->assertJson(fn(AssertableJson $json) => $json
+                ->has('errors', fn(AssertableJson $json) => $json
+                    ->has('0', fn(AssertableJson $json) => $json
+                        ->where('field', 'avatar')
+                        ->whereType('title', 'string')
+                        ->whereType('detail', 'null')
+                    )
+                )
+                ->etc()
+            );
+    }
+
+    public function testUpdateAvatar_AnotherUser_ForbiddenResponse(): void
+    {
+        $user = User::factory()->create();
+        $anotherUser = User::factory()->create();
+        Sanctum::actingAs($user);
+
+        $response = $this->putJson(route('auth.user.update-avatar', ['user' => $anotherUser->id]), [
+            'avatar' => UploadedFile::fake()->image('new-avatar.jpg'),
         ]);
 
         $response->assertForbidden();
