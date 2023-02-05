@@ -7,6 +7,12 @@ return [
 
     AuthErrorCode::InvalidRequest->value => '無効なリクエストです。',
 
+    AuthErrorCode::UserNotExists->value => 'ユーザーが存在しません。',
+
+    AuthErrorCode::FileUploadFailed->value => 'ファイルのアップロードに失敗しました。',
+
+    AuthErrorCode::PasswordMismatch->value => 'パスワードが違います。',
+
     AuthErrorCode::SignUpEmailExists->value => 'メールアドレスが既に登録されています。',
 
     AuthErrorCode::SignInFailed->value => 'メールアドレスもしくはパスワードに誤りがあります。',

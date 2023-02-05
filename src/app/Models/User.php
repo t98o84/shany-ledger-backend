@@ -70,6 +70,12 @@ class User extends Authenticatable
         return Hash::check($rawPassword, $this->password);
     }
 
+    public function setPassword($rawPassword): static
+    {
+        $this->password = static::hashPassword($rawPassword);
+        return $this;
+    }
+
     public function baseFilePath(): string
     {
         return static::BASE_FILE_PATH . "/$this->id";
