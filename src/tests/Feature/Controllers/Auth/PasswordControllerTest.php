@@ -8,6 +8,7 @@ use App\Models\Auth\PasswordReset;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
+use Laravel\Sanctum\Sanctum;
 use Tests\TestCase;
 
 class PasswordControllerTest extends TestCase
@@ -59,5 +60,45 @@ class PasswordControllerTest extends TestCase
             ->assertJson([
                 'title' => $errorMessage
             ]);
+    }
+
+    public function testUpdate_ValidData_NoContentResponse(): void
+    {
+        $user = User::factory()->create();
+        Sanctum::actingAs($user);
+
+        $response = $this->putJson(
+            route('auth.user.update-password', ['user' => $user->id]),
+            ['old_password' => 'password', 'new_password' => 'new-password']
+        );
+
+        $response->assertNoContent();
+    }
+
+    public function testUpdate_InValidOldPassword_BadRequestResponse(): void
+    {
+        $user = User::factory()->create();
+        Sanctum::actingAs($user);
+
+        $response = $this->putJson(
+            route('auth.user.update-password', ['user' => $user->id]),
+            ['old_password' => 'invalid-password', 'new_password' => 'new-password']
+        );
+
+        $response->assertStatus(400);
+    }
+
+    public function testUpdate_AnotherUser_ForbiddenResponse(): void
+    {
+        $user = User::factory()->create();
+        $anotherUser = User::factory()->create();
+        Sanctum::actingAs($user);
+
+        $response = $this->putJson(
+            route('auth.user.update-password', ['user' => $anotherUser->id]),
+            ['old_password' => 'invalid-password', 'new_password' => 'new-password']
+        );
+
+        $response->assertForbidden();
     }
 }

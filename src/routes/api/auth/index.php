@@ -28,6 +28,10 @@ Route::name('auth.')->group(function () {
             Route::patch('/profile', [\App\Http\Controllers\Auth\UserProfileController::class, 'update'])
                 ->middleware(['auth:sanctum'])
                 ->name('update-profile');
+
+            Route::put('/password', [\App\Http\Controllers\Auth\PasswordController::class, 'update'])
+                ->middleware(['auth:sanctum'])
+                ->name('update-password');
         });
     });
 });
