@@ -11,6 +11,8 @@ return [
 
     AuthErrorCode::FileUploadFailed->value => 'ファイルのアップロードに失敗しました。',
 
+    AuthErrorCode::FileUploadFailed->value => 'ファイルの削除に失敗しました。',
+
     AuthErrorCode::PasswordMismatch->value => 'パスワードが違います。',
 
     AuthErrorCode::SignUpEmailExists->value => 'メールアドレスが既に登録されています。',
