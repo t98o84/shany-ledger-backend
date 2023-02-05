@@ -136,4 +136,23 @@ class UserProfileControllerTest extends TestCase
 
         $response->assertForbidden();
     }
+
+    public function testDeleteAvatar_ValidData_NoContentResponse(): void
+    {
+        $user = User::factory()->create();
+        Sanctum::actingAs($user);
+
+        $response = $this->deleteJson(route('auth.user.delete-avatar', ['user' => $user->id]));
+
+        $response->assertNoContent();
+    }
+
+    public function testDeleteAvatar_UnauthorizedUse_rUnauthorizedResponse(): void
+    {
+        $user = User::factory()->create();
+
+        $response = $this->deleteJson(route('auth.user.delete-avatar', ['user' => $user->id]));
+
+        $response->assertUnauthorized();
+    }
 }

@@ -32,6 +32,9 @@ Route::name('auth.')->group(function () {
             Route::put('/avatar', [\App\Http\Controllers\Auth\UserProfileController::class, 'updateAvatar'])
                 ->middleware(['auth:sanctum'])
                 ->name('update-avatar');
+            Route::delete('/avatar', [\App\Http\Controllers\Auth\UserProfileController::class, 'deleteAvatar'])
+                ->middleware(['auth:sanctum'])
+                ->name('delete-avatar');
 
             Route::put('/password', [\App\Http\Controllers\Auth\PasswordController::class, 'update'])
                 ->middleware(['auth:sanctum'])

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Actions\Auth\AuthErrorCode;
+use App\Actions\Auth\DeleteUserAvatar;
 use App\Actions\Auth\UpdateUserAvatar;
 use App\Actions\Auth\UpdateUserProfile;
 use App\Exceptions\ProblemDetails\BadRequestsErrorException;
@@ -52,5 +53,21 @@ class UserProfileController extends Controller
         }
 
         return response()->json(['avatar' => $avatar->url()]);
+    }
+
+
+    /**
+     * @throws \Throwable
+     * @throws ProblemDetailsException
+     */
+    public function deleteAvatar(string $user, DeleteUserAvatar $deleteAvatar): \Illuminate\Http\Response
+    {
+        $error = $deleteAvatar->handle($user);
+
+        if ($error instanceof AuthErrorCode) {
+            $this->authErrorCodeHandler->handle($error);
+        }
+
+        return response()->noContent();
     }
 }
