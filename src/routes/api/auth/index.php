@@ -24,6 +24,10 @@ Route::name('auth.')->group(function () {
             Route::post('/verify-email', [\App\Http\Controllers\Auth\EmailVerificationController::class, 'sendEmailVerificationNotification'])
                 ->middleware(['auth:sanctum'])
                 ->name('send-email-verification-notification');
+
+            Route::patch('/profile', [\App\Http\Controllers\Auth\UserProfileController::class, 'update'])
+                ->middleware(['auth:sanctum'])
+                ->name('update-profile');
         });
     });
 });

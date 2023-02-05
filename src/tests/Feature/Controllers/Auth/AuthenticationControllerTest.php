@@ -15,13 +15,6 @@ class AuthenticationControllerTest extends TestCase
 {
     use RefreshDatabase, WithFaker;
 
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        \Event::fake();
-    }
-
     public function testSignInWithEmailAndPassword_ValidData_OKStatusResponse(): void
     {
         $user = User::factory()->create();
