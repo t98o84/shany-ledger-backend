@@ -2,7 +2,19 @@
 
 namespace App\Exceptions;
 
+use App\Exceptions\ProblemDetails\ForbiddenErrorException;
+use App\Exceptions\ProblemDetails\InternalServerErrorException;
+use App\Exceptions\ProblemDetails\NotFoundErrorException;
+use App\Exceptions\ProblemDetails\UnauthorizedErrorException;
+use App\Exceptions\ProblemDetails\ValidationErrorException;
+use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Auth\AuthenticationException;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Illuminate\Validation\ValidationException;
+use Symfony\Component\CssSelector\Exception\InternalErrorException;
+use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Throwable;
 
 class Handler extends ExceptionHandler
@@ -43,8 +55,26 @@ class Handler extends ExceptionHandler
      */
     public function register()
     {
-        $this->reportable(function (Throwable $e) {
-            //
+        $this->renderable(function (Throwable $e, $request) {
+            if ($e instanceof ModelNotFoundException || $e instanceof NotFoundHttpException || $e instanceof MethodNotAllowedHttpException) {
+                return (new NotFoundErrorException)->render();
+            }
+
+            if ($e instanceof AuthenticationException) {
+                return (new UnauthorizedErrorException)->render();
+            }
+
+            if ($e instanceof AuthorizationException) {
+                return (new ForbiddenErrorException)->render();
+            }
+
+            if ($e instanceof ValidationException) {
+                return ValidationErrorException::makeFromValidationException($e)->render();
+            }
+
+            if ($e instanceof InternalErrorException) {
+                return (new InternalServerErrorException)->render();
+            }
         });
     }
 }
