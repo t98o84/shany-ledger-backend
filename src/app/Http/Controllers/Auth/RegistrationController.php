@@ -18,8 +18,8 @@ class RegistrationController extends Controller
     {
         $userAndToken = $signUpAndIn->handle($request->email, $request->password);
 
-        if (is_a($userAndToken, AuthErrorCode::class)) {
-            throw new BadRequestsErrorException($userAndToken->value, __("error/auth/index.$userAndToken->value"));
+        if ($userAndToken instanceof AuthErrorCode) {
+            throw $userAndToken->toProblemDetailException();
         }
 
         return response()->json([

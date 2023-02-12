@@ -4,15 +4,12 @@ namespace Tests\Feature\Actions\Auth;
 
 use App\Actions\Auth\AuthErrorCode;
 use App\Actions\Auth\DeleteUserAvatar;
-use App\Actions\Auth\UpdateUserAvatar;
 use App\Actions\Shared\RemoveFile;
-use App\Actions\Shared\UploadFile;
 use App\Models\Shared\File;
 use App\Models\User;
 use App\Models\UserAvatar;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
-use Illuminate\Http\UploadedFile;
 use Laravel\Sanctum\Sanctum;
 use Tests\TestCase;
 
@@ -64,7 +61,7 @@ class DeleteUserAvatarTest extends TestCase
     /**
      * @throws \Throwable
      */
-    public function testHandle_AnotherUser_ForbiddenCodeReturned(): void
+    public function testHandle_AnotherUser_UnauthorizedCodeReturned(): void
     {
         $user = User::factory()->create();
         $anotherUser = User::factory()->create();
@@ -72,20 +69,20 @@ class DeleteUserAvatarTest extends TestCase
 
         $error = $this->action->handle($anotherUser->id);
 
-        $this->assertSame(AuthErrorCode::Forbidden, $error);
+        $this->assertSame(AuthErrorCode::Unauthorized, $error);
     }
 
 
     /**
      * @throws \Throwable
      */
-    public function testHandle_NotExistsUser_UserNotExistsCodeCodeReturned(): void
+    public function testHandle_NotExistsUser_InvalidUserIdCodeReturned(): void
     {
         $user = User::factory()->create();
         Sanctum::actingAs($user);
 
         $error = $this->action->handle("invalid-$user->id");
 
-        $this->assertSame(AuthErrorCode::UserNotExists, $error);
+        $this->assertSame(AuthErrorCode::InvalidUserId, $error);
     }
 }

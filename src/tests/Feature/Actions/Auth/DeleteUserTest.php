@@ -64,4 +64,30 @@ class DeleteUserTest extends TestCase
 
         $this->assertSame($user->email, $newUser->email);
     }
+
+    /**
+     * @throws \Throwable
+     */
+    public function testHandle_UserDoesNotExist_InvalidUserIdCodeReturned(): void
+    {
+        $user = User::factory()->create();
+        Sanctum::actingAs($user);
+
+        $error = $this->action->handle('invalid-id', $user->currentAccessToken());
+
+        $this->assertSame(AuthErrorCode::InvalidUserId, $error);
+    }
+
+    /**
+     * @throws \Throwable
+     */
+    public function testHandle_TokenDoesNotExist_InvalidTokenCodeReturned(): void
+    {
+        $user = User::factory()->create();
+        Sanctum::actingAs($user);
+
+        $error = $this->action->handle($user->id, 'invalid-token');
+
+        $this->assertSame(AuthErrorCode::InvalidToken, $error);
+    }
 }

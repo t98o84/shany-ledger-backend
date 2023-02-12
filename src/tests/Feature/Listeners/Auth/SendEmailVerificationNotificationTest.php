@@ -57,7 +57,7 @@ class SendEmailVerificationNotificationTest extends TestCase
         $user = User::factory()->unverified()->make();
         $event = new SignedUp($user);
 
-        $this->sendEmailVerificationNotificationAction->expects('handle')->once()->with($user->id)->andReturn(AuthErrorCode::SendEmailVerificationNotificationUserNotExists);
+        $this->sendEmailVerificationNotificationAction->expects('handle')->once()->with($user->id)->andReturn(AuthErrorCode::InvalidUserId);
 
         $listener = new SendEmailVerificationNotification($this->sendEmailVerificationNotificationAction);
 

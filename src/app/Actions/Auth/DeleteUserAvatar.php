@@ -4,31 +4,28 @@ namespace App\Actions\Auth;
 
 use App\Actions\Shared\FileErrorCode;
 use App\Actions\Shared\RemoveFile;
-use App\Actions\Shared\UploadFile;
 use App\Models\User;
-use App\Models\UserAvatar;
-use Illuminate\Http\UploadedFile;
 
-class DeleteUserAvatar
+readonly class DeleteUserAvatar
 {
-    public function __construct(private readonly RemoveFile $removeFile)
+    public function __construct(private RemoveFile $removeFile)
     {
     }
 
     /**
      * @throws \Throwable
      */
-    public function handle(string $id): true|AuthErrorCode|FileErrorCode
+    public function handle(string $id): true|AuthErrorCode
     {
         $user = User::find($id);
 
         if (is_null($user)) {
-            return AuthErrorCode::UserNotExists;
+            return AuthErrorCode::InvalidUserId;
         }
 
         $authUser = \Auth::user();
         if (is_null($authUser) || !$authUser->can('delete', $user)) {
-            return AuthErrorCode::Forbidden;
+            return AuthErrorCode::Unauthorized;
         }
 
         if (is_null($user->avatar?->file)) {
@@ -39,7 +36,7 @@ class DeleteUserAvatar
             $error = $this->removeFile->handle($user->avatar->file->id);
 
             if ($error instanceof FileErrorCode) {
-                return AuthErrorCode::FileRemoveFailed;
+                return AuthErrorCode::FileIOFailed;
             }
 
             $user->avatar->delete();

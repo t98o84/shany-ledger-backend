@@ -15,11 +15,11 @@ class SendEmailVerificationNotification
         $user = User::find($id);
 
         if (is_null($user)) {
-            return AuthErrorCode::SendEmailVerificationNotificationUserNotExists;
+            return AuthErrorCode::InvalidUserId;
         }
 
         if ($user->hasVerifiedEmail()) {
-            return AuthErrorCode::SendEmailVerificationNotificationEmailVerified;
+            return AuthErrorCode::EmailVerified;
         }
 
         $hash = \Hash::make($user->name . $user->getEmailForVerification());

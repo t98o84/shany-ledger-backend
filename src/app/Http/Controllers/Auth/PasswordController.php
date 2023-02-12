@@ -16,51 +16,34 @@ use App\Http\Requests\Auth\UpdatePasswordRequest;
 
 class PasswordController extends Controller
 {
-    public function __construct(private readonly AuthErrorCodeHandler $authErrorCodeHandler)
-    {
-    }
-
-    /**
-     * @param SendPasswordResetLinkRequest $request
-     * @param SendPasswordResetLink $sendPasswordResetLink
-     * @return \Illuminate\Http\Response
-     * @throws BadRequestsErrorException
-     */
     public function sendPasswordResetLink(SendPasswordResetLinkRequest $request, SendPasswordResetLink $sendPasswordResetLink): \Illuminate\Http\Response
     {
         $error = $sendPasswordResetLink->handle($request->email);
 
         if ($error instanceof AuthErrorCode) {
-            throw new BadRequestsErrorException($error->value, __("error/auth/index.$error->value"));
+            throw $error->toProblemDetailException();
         }
 
         return response()->noContent();
     }
 
-    /**
-     * @throws \Throwable
-     * @throws BadRequestsErrorException
-     */
     public function resetPassword(ResetPasswordRequest $request, ResetPassword $resetPassword): \Illuminate\Http\Response
     {
         $error = $resetPassword->handle($request->password, $request->email, $request->token);
 
         if ($error instanceof AuthErrorCode) {
-            throw new BadRequestsErrorException($error->value, __("error/auth/index.$error->value"));
+            throw $error->toProblemDetailException();
         }
 
         return response()->noContent();
     }
 
-    /**
-     * @throws ProblemDetailsException
-     */
     public function update(string $user, UpdatePasswordRequest $request, UpdatePassword $updatePassword): \Illuminate\Http\Response
     {
         $error = $updatePassword->handle(id: $user, oldPassword: $request->old_password, newPassword: $request->new_password);
 
         if ($error instanceof AuthErrorCode) {
-            $this->authErrorCodeHandler->handle($error);
+            throw $error->toProblemDetailException();
         }
 
         return response()->noContent();

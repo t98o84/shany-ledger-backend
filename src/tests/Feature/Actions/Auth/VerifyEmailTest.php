@@ -31,7 +31,7 @@ class VerifyEmailTest extends TestCase
         $this->assertTrue($true);
     }
 
-    public function testHandle_UserNotExists_VerifyEmailUserNotExistsCodeReturned(): void
+    public function testHandle_UserNotExists_InvalidUserIdCodeReturned(): void
     {
         $user = User::factory()->unverified()->make();
         $verifyEmail = new VerifyEmail();
@@ -44,10 +44,10 @@ class VerifyEmailTest extends TestCase
 
         $error = $verifyEmail->handle($user->id, $hash, $expiration->getTimestamp(), $signature->signature);
 
-        $this->assertSame(AuthErrorCode::VerifyEmailUserNotExists, $error);
+        $this->assertSame(AuthErrorCode::InvalidUserId, $error);
     }
 
-    public function testHandle_EmailVerified_VerifyEmailEmailVerifiedCodeReturned(): void
+    public function testHandle_EmailVerified_EmailVerifiedCodeReturned(): void
     {
         $user = User::factory()->create();
         $verifyEmail = new VerifyEmail();
@@ -61,7 +61,7 @@ class VerifyEmailTest extends TestCase
 
         $error = $verifyEmail->handle($user->id, $hash, $expiration->getTimestamp(), $signature->signature);
 
-        $this->assertSame(AuthErrorCode::VerifyEmailEmailVerified, $error);
+        $this->assertSame(AuthErrorCode::EmailVerified, $error);
     }
 
     public function testHandle_InvalidSignature_VerifyEmailInvalidSignatureCodeReturned(): void
@@ -77,10 +77,10 @@ class VerifyEmailTest extends TestCase
 
         $error = $verifyEmail->handle($user->id, $hash, $expiration->clone()->addMinute()->getTimestamp(), $signature->signature);
 
-        $this->assertSame(AuthErrorCode::VerifyEmailInvalidSignature, $error);
+        $this->assertSame(AuthErrorCode::InvalidSignature, $error);
     }
 
-    public function testHandle_SignatureExpired_VerifyEmailInvalidSignatureCodeReturned(): void
+    public function testHandle_SignatureExpired_SignatureExpiredCodeReturned(): void
     {
         $user = User::factory()->unverified()->create();
         $verifyEmail = new VerifyEmail();
@@ -93,6 +93,6 @@ class VerifyEmailTest extends TestCase
 
         $error = $verifyEmail->handle($user->id, $hash, $expiration->getTimestamp(), $signature->signature);
 
-        $this->assertSame(AuthErrorCode::VerifyEmailSignatureExpired, $error);
+        $this->assertSame(AuthErrorCode::SignatureExpired, $error);
     }
 }

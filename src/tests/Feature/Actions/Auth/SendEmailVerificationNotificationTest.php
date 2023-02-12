@@ -76,20 +76,18 @@ class SendEmailVerificationNotificationTest extends TestCase
         $this->assertTrue($signature->valid());
     }
 
-    public function testHandle_UserNotExists_SendEmailVerificationNotificationUserNotExistsCodeReturned(): void
+    public function testHandle_UserNotExists_InvalidUserIdCodeReturned(): void
     {
-        $errorCode = $this->action->handle($this->faker->uuid());
+        $error = $this->action->handle($this->faker->uuid());
 
-        $this->assertInstanceOf(AuthErrorCode::class, $errorCode);
-        $this->assertSame(AuthErrorCode::SendEmailVerificationNotificationUserNotExists, $errorCode);
+        $this->assertSame(AuthErrorCode::InvalidUserId, $error);
     }
 
-    public function testHandle_EmailVerified_SendEmailVerificationNotificationEmailVerifiedCodeReturned(): void
+    public function testHandle_EmailVerified_EmailVerifiedCodeReturned(): void
     {
         $user = User::factory()->create();
-        $errorCode = $this->action->handle($user->id);
+        $error = $this->action->handle($user->id);
 
-        $this->assertInstanceOf(AuthErrorCode::class, $errorCode);
-        $this->assertSame(AuthErrorCode::SendEmailVerificationNotificationEmailVerified, $errorCode);
+        $this->assertSame(AuthErrorCode::EmailVerified, $error);
     }
 }

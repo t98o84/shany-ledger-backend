@@ -3,37 +3,29 @@
 use App\Actions\Auth\AuthErrorCode;
 
 return [
-    AuthErrorCode::Forbidden->value => '権限がありません。',
+    AuthErrorCode::Unauthenticated->code() => '認証されていません。',
 
-    AuthErrorCode::InvalidRequest->value => '無効なリクエストです。',
+    AuthErrorCode::Unauthorized->code() => '権限がありません。',
 
-    AuthErrorCode::UserNotExists->value => 'ユーザーが存在しません。',
+    AuthErrorCode::AlreadyRegisteredEmail->code() => 'メールアドレスが既に登録されています。',
 
-    AuthErrorCode::FileUploadFailed->value => 'ファイルのアップロードに失敗しました。',
+    AuthErrorCode::FileIOFailed->code() => 'ファイルの読み込みもしくは書き込みに失敗しました。',
 
-    AuthErrorCode::FileUploadFailed->value => 'ファイルの削除に失敗しました。',
+    AuthErrorCode::InvalidUserId->code() => 'ユーザーIDが無効です。',
 
-    AuthErrorCode::PasswordMismatch->value => 'パスワードが違います。',
+    AuthErrorCode::InvalidSignature->code() => '署名が無効です。',
 
-    AuthErrorCode::SignUpEmailExists->value => 'メールアドレスが既に登録されています。',
+    AuthErrorCode::SignatureExpired->code() => '署名の有効期限が切れています。',
 
-    AuthErrorCode::SignInFailed->value => 'メールアドレスもしくはパスワードに誤りがあります。',
+    AuthErrorCode::TokenExpired->code() => 'トークンの有効期限が切れています。',
 
-    AuthErrorCode::SendEmailVerificationNotificationUserNotExists->value => '指定されたユーザーが存在しません。',
+    AuthErrorCode::InvalidToken->code() => 'トークンが無効です。',
 
-    AuthErrorCode::SendEmailVerificationNotificationEmailVerified->value => 'メールアドレスは既に検証済です。',
+    AuthErrorCode::InvalidEmail->code() => 'メールアドレスが無効です。',
 
-    AuthErrorCode::VerifyEmailUserNotExists->value => '指定されたユーザーが存在しません。',
+    AuthErrorCode::EmailVerified->code() => 'メールアドレスは既に検証済です。',
 
-    AuthErrorCode::VerifyEmailEmailVerified->value => 'メールアドレスは既に検証済です。',
+    AuthErrorCode::InvalidEmailOrPassword->code() => 'メールアドレスもしくはパスワードが無効です。',
 
-    AuthErrorCode::VerifyEmailInvalidSignature->value => '無効なリクエストです。',
-
-    AuthErrorCode::VerifyEmailSignatureExpired->value => 'リンクの有効期限が切れています。',
-
-    AuthErrorCode::SendPasswordResetLinkUserNotExists->value => 'メールアドレスに一致するユーザーは存在していません。',
-
-    AuthErrorCode::ResetPasswordInvalidRequest->value => '無効なリクエストです。',
-
-    AuthErrorCode::ResetPasswordTokenExpired->value => '有効期限が切れています。',
+    AuthErrorCode::InvalidPassword->code() => 'パスワードが無効です。',
 ];

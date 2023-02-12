@@ -40,12 +40,11 @@ class SignUpWithEmailAndPasswordTest extends TestCase
         \Event::assertDispatched(SignedUp::class);
     }
 
-    public function testHandle_EmailExists_SignUpEmailExistsCodeReturned(): void
+    public function testHandle_EmailExists_AlreadyRegisteredEmailCodeReturned(): void
     {
         $user = User::factory()->create();
-        $errorCode = $this->action->handle($user->email, 'password');
+        $error = $this->action->handle($user->email, 'password');
 
-        $this->assertInstanceOf(AuthErrorCode::class, $errorCode);
-        $this->assertSame(AuthErrorCode::SignUpEmailExists, $errorCode);
+        $this->assertSame(AuthErrorCode::AlreadyRegisteredEmail, $error);
     }
 }

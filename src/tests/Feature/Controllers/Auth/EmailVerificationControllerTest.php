@@ -4,7 +4,6 @@ namespace Tests\Feature\Controllers\Auth;
 
 use App\Actions\Auth\AuthErrorCode;
 use App\Actions\Auth\SendEmailVerificationNotification;
-use App\Exceptions\ProblemDetails\BadRequestsErrorException;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
@@ -35,13 +34,14 @@ class EmailVerificationControllerTest extends TestCase
         $response->assertUnauthorized();
     }
 
-    public function testSendEmailVerificationNotification_EmailVerified_BadRequestErrorExceptionThrown(): void
+    public function testSendEmailVerificationNotification_EmailVerified_BadRequestResponse(): void
     {
         $user = User::factory()->create();
         Sanctum::actingAs($user);
 
-        $this->expectException(BadRequestsErrorException::class);
-        $this->withoutExceptionHandling()->postJson(route('auth.user.send-email-verification-notification', ['user' => $user->id]));
+        $response = $this->postJson(route('auth.user.send-email-verification-notification', ['user' => $user->id]));
+
+        $response->assertStatus(400);
     }
 
     public function testVerify_ValidData_RedirectResponse(): void
@@ -73,8 +73,7 @@ class EmailVerificationControllerTest extends TestCase
 
         $response = $this->getJson($verificationUrl);
 
-        $errorMessage = __("error/auth/index." . AuthErrorCode::VerifyEmailUserNotExists->value);
-        $response->assertRedirect(config('app.front_url') . "/email-verification?user=$user->id&error=$errorMessage");
+        $response->assertRedirect(config('app.front_url') . "/email-verification?user=$user->id&error=" .  AuthErrorCode::InvalidUserId->title());
     }
 
     public function testVerify_EmailVerified_RedirectResponse(): void
@@ -90,8 +89,7 @@ class EmailVerificationControllerTest extends TestCase
         $this->getJson($verificationUrl);
         $response = $this->getJson($verificationUrl);
 
-        $errorMessage = __("error/auth/index." . AuthErrorCode::VerifyEmailEmailVerified->value);
-        $response->assertRedirect(config('app.front_url') . "/email-verification?user=$user->id&error=$errorMessage");
+        $response->assertRedirect(config('app.front_url') . "/email-verification?user=$user->id&error=" . AuthErrorCode::EmailVerified->title());
     }
 
     public function testVerify_FalsifiedSignature_RedirectResponse(): void
@@ -106,8 +104,7 @@ class EmailVerificationControllerTest extends TestCase
 
         $response = $this->getJson("$verificationUrl-falsified");
 
-        $errorMessage = __("error/auth/index." . AuthErrorCode::VerifyEmailInvalidSignature->value);
-        $response->assertRedirect(config('app.front_url') . "/email-verification?user=$user->id&error=$errorMessage");
+        $response->assertRedirect(config('app.front_url') . "/email-verification?user=$user->id&error=" . AuthErrorCode::InvalidSignature->title());
     }
 
     public function testVerify_ExpiredSignature_RedirectResponse(): void
@@ -124,7 +121,6 @@ class EmailVerificationControllerTest extends TestCase
 
         $response = $this->getJson($verificationUrl);
 
-        $errorMessage = __("error/auth/index." . AuthErrorCode::VerifyEmailSignatureExpired->value);
-        $response->assertRedirect(config('app.front_url') . "/email-verification?user=$user->id&error=$errorMessage");
+        $response->assertRedirect(config('app.front_url') . "/email-verification?user=$user->id&error=" . AuthErrorCode::SignatureExpired->title());
     }
 }

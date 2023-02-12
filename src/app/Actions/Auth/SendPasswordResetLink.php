@@ -3,7 +3,7 @@
 namespace App\Actions\Auth;
 
 use App\Mail\Auth\PasswordReset;
-use  App\Models\Auth\PasswordReset as PasswordResetRepository;
+use  App\Models\Auth\PasswordReset as PasswordResetModel;
 use App\Models\User;
 
 class SendPasswordResetLink
@@ -13,20 +13,22 @@ class SendPasswordResetLink
         $user = User::where('email', $email)->first();
 
         if (is_null($user)) {
-            return AuthErrorCode::SendPasswordResetLinkUserNotExists;
+            return AuthErrorCode::InvalidUserId;
         }
 
-        PasswordResetRepository::find($email)?->delete();
+        return \DB::transaction(function () use ($email, $user) {
+            PasswordResetModel::find($email)?->delete();
 
-        $token = PasswordResetRepository::createToken();
+            $token = PasswordResetModel::createToken();
 
-        PasswordResetRepository::create(['email' => $email, 'token' => PasswordResetRepository::hashToken($token)]);
+            PasswordResetModel::create(['email' => $email, 'token' => PasswordResetModel::hashToken($token)]);
 
-        $resetUrl = static::buildResetUrl($token);
+            $resetUrl = static::buildResetUrl($token);
 
-        \Mail::send(new PasswordReset($user, $resetUrl));
+            \Mail::send(new PasswordReset($user, $resetUrl));
 
-        return true;
+            return true;
+        });
     }
 
     private static function buildResetUrl(string $token): string

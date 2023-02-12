@@ -55,7 +55,7 @@ class ResetPasswordTest extends TestCase
     /**
      * @throws \Throwable
      */
-    public function testHandle_PasswordResetEmailNotExists_ResetPasswordInvalidRequestCodeReturned(): void
+    public function testHandle_PasswordResetEmailNotExists_InvalidEmailCodeReturned(): void
     {
         $user = User::factory()->make();
         $token = PasswordReset::createToken();
@@ -64,13 +64,13 @@ class ResetPasswordTest extends TestCase
 
         $error = $resetPassword->handle('password', $user->email, $token);
 
-        $this->assertSame(AuthErrorCode::ResetPasswordInvalidRequest, $error);
+        $this->assertSame(AuthErrorCode::InvalidEmail, $error);
     }
 
     /**
      * @throws \Throwable
      */
-    public function testHandle_InvalidToken_ResetPasswordInvalidRequestCodeReturned(): void
+    public function testHandle_InvalidToken_InvalidEmailCodeReturned(): void
     {
         $user = User::factory()->create();
         $token = PasswordReset::createToken();
@@ -79,13 +79,13 @@ class ResetPasswordTest extends TestCase
 
         $error = $resetPassword->handle('password', $user->email, "invalid-$token");
 
-        $this->assertSame(AuthErrorCode::ResetPasswordInvalidRequest, $error);
+        $this->assertSame(AuthErrorCode::InvalidEmail, $error);
     }
 
     /**
      * @throws \Throwable
      */
-    public function testHandle_ExpiredToken_ResetPasswordTokenExpiredCodeReturned(): void
+    public function testHandle_ExpiredToken_TokenExpiredCodeReturned(): void
     {
         $user = User::factory()->create();
         $rawToken = PasswordReset::createToken();
@@ -96,13 +96,13 @@ class ResetPasswordTest extends TestCase
 
         $error = $resetPassword->handle('password', $user->email, $rawToken);
 
-        $this->assertSame(AuthErrorCode::ResetPasswordTokenExpired, $error);
+        $this->assertSame(AuthErrorCode::TokenExpired, $error);
     }
 
     /**
      * @throws \Throwable
      */
-    public function testHandle_UserNotExists_ResetPasswordInvalidRequestCodeReturned(): void
+    public function testHandle_UserNotExists_InvalidEmailCodeReturned(): void
     {
         $user = User::factory()->create();
         $token = PasswordReset::createToken();
@@ -112,6 +112,6 @@ class ResetPasswordTest extends TestCase
 
         $error = $resetPassword->handle('password', $user->email, $token);
 
-        $this->assertSame(AuthErrorCode::ResetPasswordInvalidRequest, $error);
+        $this->assertSame(AuthErrorCode::InvalidEmail, $error);
     }
 }

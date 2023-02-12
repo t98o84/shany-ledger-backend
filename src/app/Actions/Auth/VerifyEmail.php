@@ -13,11 +13,11 @@ class VerifyEmail
         $user = User::find($id);
 
         if (is_null($user)) {
-            return AuthErrorCode::VerifyEmailUserNotExists;
+            return AuthErrorCode::InvalidUserId;
         }
 
         if ($user->hasVerifiedEmail()) {
-            return AuthErrorCode::VerifyEmailEmailVerified;
+            return AuthErrorCode::EmailVerified;
         }
 
         $signatureModel = new Signature($signature, [
@@ -26,11 +26,11 @@ class VerifyEmail
         ], new Carbon($expiration));
 
         if ($signatureModel->expired()) {
-            return AuthErrorCode::VerifyEmailSignatureExpired;
+            return AuthErrorCode::SignatureExpired;
         }
 
         if (!$signatureModel->valid()) {
-            return AuthErrorCode::VerifyEmailInvalidSignature;
+            return AuthErrorCode::InvalidSignature;
         }
 
         $user->markEmailAsVerified();

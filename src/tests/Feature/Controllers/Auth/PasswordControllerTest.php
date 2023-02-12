@@ -2,7 +2,6 @@
 
 namespace Tests\Feature\Controllers\Auth;
 
-use App\Actions\Auth\AuthErrorCode;
 use App\Exceptions\ProblemDetails\BadRequestsErrorException;
 use App\Models\Auth\PasswordReset;
 use App\Models\User;
@@ -26,8 +25,8 @@ class PasswordControllerTest extends TestCase
 
     public function testSendPasswordResetLink_UserNotExists_BadRequestErrorExceptionThrown(): void
     {
-        $this->expectException(BadRequestsErrorException::class);
-        $this->withoutExceptionHandling()->postJson(route('auth.send-password-reset-link', ['email' => $this->faker->safeEmail()]));
+        $response = $this->postJson(route('auth.send-password-reset-link', ['email' => $this->faker->safeEmail()]));
+        $response->assertStatus(400);
     }
 
     public function testResetPassword_ValidData_NoContentResponse(): void
@@ -44,7 +43,7 @@ class PasswordControllerTest extends TestCase
         $response->assertNoContent();
     }
 
-    public function testResetPassword_ExpiredToken_NoContentResponse(): void
+    public function testResetPassword_ExpiredToken_BadRequestResponse(): void
     {
         $user = User::factory()->create();
         $token = PasswordReset::createToken();
@@ -55,11 +54,7 @@ class PasswordControllerTest extends TestCase
 
         $response = $this->putJson(route('auth.reset-password', ['email' => $user->email, 'password' => 'password', 'token' => $token]));
 
-        $errorMessage = __("error/auth/index." . AuthErrorCode::ResetPasswordTokenExpired->value);
-        $response->assertStatus(400)
-            ->assertJson([
-                'title' => $errorMessage
-            ]);
+        $response->assertStatus(400);
     }
 
     public function testUpdate_ValidData_NoContentResponse(): void

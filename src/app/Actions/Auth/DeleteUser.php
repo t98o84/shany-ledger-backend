@@ -14,10 +14,15 @@ class DeleteUser
     public function handle(string $id, string $token): true|AuthErrorCode
     {
         $user = User::find($id);
+
+        if (is_null($user)) {
+            return AuthErrorCode::InvalidUserId;
+        }
+
         $tokenModel = PersonalAccessToken::findToken($token);
 
-        if (is_null($user) || is_null($tokenModel)) {
-            return AuthErrorCode::InvalidRequest;
+        if (is_null($tokenModel)) {
+            return AuthErrorCode::InvalidToken;
         }
 
         if (!method_exists($tokenModel->tokenable, 'getAuthIdentifier')) {
@@ -25,7 +30,7 @@ class DeleteUser
         }
 
         if ($user->getAuthIdentifier() !== $tokenModel->tokenable->getAuthIdentifier()) {
-            return AuthErrorCode::InvalidRequest;
+            return AuthErrorCode::Unauthorized;
         }
 
         \DB::transaction(static function () use ($user) {

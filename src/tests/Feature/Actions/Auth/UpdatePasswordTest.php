@@ -68,20 +68,20 @@ class UpdatePasswordTest extends TestCase
     /**
      * @throws \Throwable
      */
-    public function testHandle_UserNotExists_UserNotExistsCodeReturned(): void
+    public function testHandle_UserNotExists_InvalidUserIdCodeReturned(): void
     {
         $user = User::factory()->create();
         Sanctum::actingAs($user);
 
         $error = $this->action->handle("invalid-$user->id", 'password', 'new-password');
 
-        $this->assertSame(AuthErrorCode::UserNotExists, $error);
+        $this->assertSame(AuthErrorCode::InvalidUserId, $error);
     }
 
     /**
      * @throws \Throwable
      */
-    public function testHandle_AnotherUser_ForbiddenCodeReturned(): void
+    public function testHandle_AnotherUser_UnauthorizedCodeReturned(): void
     {
         $user = User::factory()->create();
         $anotherUser = User::factory()->create();
@@ -89,18 +89,18 @@ class UpdatePasswordTest extends TestCase
 
         $error = $this->action->handle($anotherUser->id, 'password', 'new-password');
 
-        $this->assertSame(AuthErrorCode::Forbidden, $error);
+        $this->assertSame(AuthErrorCode::Unauthorized, $error);
     }
 
     /**
      * @throws \Throwable
      */
-    public function testHandle_Unauthenticated_ForbiddenCodeReturned(): void
+    public function testHandle_Unauthenticated_UnauthorizedCodeReturned(): void
     {
         $user = User::factory()->create();
 
         $error = $this->action->handle($user->id, 'password', 'new-password');
 
-        $this->assertSame(AuthErrorCode::Forbidden, $error);
+        $this->assertSame(AuthErrorCode::Unauthorized, $error);
     }
 }

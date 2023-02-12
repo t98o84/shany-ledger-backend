@@ -12,7 +12,7 @@ class SignInWithEmailAndPassword
         $user = User::where('email', $email)->first();
 
         if (is_null($user) || !$user->equalPassword($password)) {
-            return AuthErrorCode::SignInFailed;
+            return AuthErrorCode::InvalidEmailOrPassword;
         }
 
         $token = $user->createToken('access-token');

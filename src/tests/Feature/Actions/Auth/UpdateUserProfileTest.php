@@ -94,20 +94,20 @@ class UpdateUserProfileTest extends TestCase
     /**
      * @throws \Throwable
      */
-    public function testHandle_UserNotExists_UserNotExistsCodeReturned(): void
+    public function testHandle_UserNotExists_InvalidUserIdCodeReturned(): void
     {
         $user = User::factory()->create(['email' => 'test@example.com']);
         Sanctum::actingAs($user);
 
         $error = $this->action->handle($user->id . 'failed',  $user->name, 'update@example.com');
 
-        $this->assertSame(AuthErrorCode::UserNotExists, $error);
+        $this->assertSame(AuthErrorCode::InvalidUserId, $error);
     }
 
     /**
      * @throws \Throwable
      */
-    public function testHandle_AnotherUser_ForbiddenCodeReturned(): void
+    public function testHandle_AnotherUser_UnauthorizedCodeReturned(): void
     {
         $user = User::factory()->create();
         $anotherUse = User::factory()->create();
@@ -115,18 +115,18 @@ class UpdateUserProfileTest extends TestCase
 
         $error = $this->action->handle($anotherUse->id,  $anotherUse->name, $anotherUse->email);
 
-        $this->assertSame(AuthErrorCode::Forbidden, $error);
+        $this->assertSame(AuthErrorCode::Unauthorized, $error);
     }
 
     /**
      * @throws \Throwable
      */
-    public function testHandle_Unauthenticated_ForbiddenCodeReturned(): void
+    public function testHandle_Unauthenticated_UnauthorizedCodeReturned(): void
     {
         $user = User::factory()->create();
 
         $error = $this->action->handle($user->id,  $user->name, $user->email);
 
-        $this->assertSame(AuthErrorCode::Forbidden, $error);
+        $this->assertSame(AuthErrorCode::Unauthorized, $error);
     }
 }

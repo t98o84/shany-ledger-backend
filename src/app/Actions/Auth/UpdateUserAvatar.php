@@ -22,12 +22,12 @@ class UpdateUserAvatar
         $user = User::find($id);
 
         if (is_null($user)) {
-            return AuthErrorCode::UserNotExists;
+            return AuthErrorCode::InvalidUserId;
         }
 
         $authUser = \Auth::user();
         if (is_null($authUser) || !$authUser->can('update', $user)) {
-            return AuthErrorCode::Forbidden;
+            return AuthErrorCode::Unauthorized;
         }
 
         try {

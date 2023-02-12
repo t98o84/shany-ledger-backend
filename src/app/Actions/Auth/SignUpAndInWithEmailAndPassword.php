@@ -19,13 +19,13 @@ readonly class SignUpAndInWithEmailAndPassword
         return \DB::transaction(function() use ($email, $password) {
             $user = $this->signUp->handle($email, $password);
 
-            if (is_a($user, AuthErrorCode::class)) {
+            if ($user instanceof AuthErrorCode) {
                 return $user;
             }
 
             $token = $this->signIn->handle($email, $password);
 
-            if (is_a($token, AuthErrorCode::class)) {
+            if ($token instanceof AuthErrorCode) {
                 return $token;
             }
 

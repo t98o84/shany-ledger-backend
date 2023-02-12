@@ -11,7 +11,7 @@ class SignUpWithEmailAndPassword
     public function handle(string $email, string $password): User|AuthErrorCode
     {
         if (User::where('email', $email)->exists()) {
-            return AuthErrorCode::SignUpEmailExists;
+            return AuthErrorCode::AlreadyRegisteredEmail;
         }
 
         $user = User::create([

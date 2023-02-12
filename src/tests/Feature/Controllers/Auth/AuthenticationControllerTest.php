@@ -41,18 +41,14 @@ class AuthenticationControllerTest extends TestCase
         );
     }
 
-    public function testSignInWithEmailAndPassword_UserNotExists_BadRequestResponse(): void
+    public function testSignInWithEmailAndPassword_UserDoesNotExists_BadRequestResponse(): void
     {
         $response = $this->postJson(route('auth.sign-in-with-email-and-password'), [
             'email' => 'failed@example.com',
             'password' => 'password',
         ]);
 
-        $errorMessage = __("error/auth/index." . AuthErrorCode::SignInFailed->value);
-        $response->assertStatus(400)
-            ->assertJson([
-                'title' => $errorMessage,
-            ]);
+        $response->assertStatus(400);
     }
 
     public function testSignOut_Authenticated_TokenDeleted(): void

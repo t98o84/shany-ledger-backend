@@ -16,17 +16,17 @@ class ResetPassword
         $passwordReset = PasswordReset::find($email);
 
         if (is_null($passwordReset) || !$passwordReset->equalsToken($token)) {
-            return AuthErrorCode::ResetPasswordInvalidRequest;
+            return AuthErrorCode::InvalidEmail;
         }
 
         if ($passwordReset->expired()) {
-            return AuthErrorCode::ResetPasswordTokenExpired;
+            return AuthErrorCode::TokenExpired;
         }
 
         $user = User::where('email', $email)->first();
 
         if (is_null($user)) {
-            return AuthErrorCode::ResetPasswordInvalidRequest;
+            return AuthErrorCode::InvalidEmail;
         }
 
         $user->password = User::hashPassword($password);

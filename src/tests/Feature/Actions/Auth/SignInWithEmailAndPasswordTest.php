@@ -40,20 +40,18 @@ class SignInWithEmailAndPasswordTest extends TestCase
         \Event::assertDispatched(SignedIn::class);
     }
 
-    public function testHandle_EmailNotExists_SignInFailedErrorCodeReturned(): void
+    public function testHandle_EmailNotExists_InvalidEmailOrPasswordCodeReturned(): void
     {
-        $errorCode = $this->action->handle('test@example.com', 'password');
+        $error = $this->action->handle('test@example.com', 'password');
 
-        $this->assertInstanceOf(AuthErrorCode::class, $errorCode);
-        $this->assertSame(AuthErrorCode::SignInFailed, $errorCode);
+        $this->assertSame(AuthErrorCode::InvalidEmailOrPassword, $error);
     }
 
-    public function testHandle_WrongPassword_SignInFailedErrorCodeReturned(): void
+    public function testHandle_WrongPassword_InvalidEmailOrPasswordCodeReturned(): void
     {
         $user = User::factory()->create();
-        $errorCode = $this->action->handle($user->email, 'wrong-password');
+        $error = $this->action->handle($user->email, 'wrong-password');
 
-        $this->assertInstanceOf(AuthErrorCode::class, $errorCode);
-        $this->assertSame(AuthErrorCode::SignInFailed, $errorCode);
+        $this->assertSame(AuthErrorCode::InvalidEmailOrPassword, $error);
     }
 }

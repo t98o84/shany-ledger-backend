@@ -16,7 +16,7 @@ class EmailVerificationController extends Controller
         $error = $verifyEmail->handle($user, $request->hash, $request->expiration, $request->signature);
 
         if ($error instanceof AuthErrorCode) {
-            return response()->redirectTo(config('app.front_url') . "/email-verification?user=$user&error=" . __("error/auth/index.$error->value"));
+            return response()->redirectTo(config('app.front_url') . "/email-verification?user=$user&error=" . $error->title());
         }
 
         return response()->redirectTo(config('app.front_url') . "/email-verified?user=$user");
@@ -26,8 +26,8 @@ class EmailVerificationController extends Controller
     {
         $verificationUrl = $sendEmailVerificationNotification->handle($user);
 
-        if (is_a($verificationUrl, AuthErrorCode::class)) {
-            throw new BadRequestsErrorException(errorCode: $verificationUrl->value, title: __("error/auth/index.$verificationUrl->value"));
+        if ($verificationUrl instanceof AuthErrorCode) {
+            throw $verificationUrl->toProblemDetailException();
         }
 
         return response()->noContent();

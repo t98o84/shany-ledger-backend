@@ -54,14 +54,14 @@ class SendPasswordResetLinkTest extends TestCase
         $this->assertTrue($true);
     }
 
-    public function testHandle_EmailNotExists_SendPasswordResetLinkUserNotExistsCodeReturned(): void
+    public function testHandle_EmailNotExists_InvalidUserIdCodeReturned(): void
     {
         $user = User::factory()->make();
         $sendPasswordResetLink = new SendPasswordResetLink();
 
         $error = $sendPasswordResetLink->handle($user->email);
 
-        $this->assertSame(AuthErrorCode::SendPasswordResetLinkUserNotExists, $error);
+        $this->assertSame(AuthErrorCode::InvalidUserId, $error);
     }
 
 }
