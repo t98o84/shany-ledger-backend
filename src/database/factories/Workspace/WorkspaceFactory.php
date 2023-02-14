@@ -21,8 +21,15 @@ class WorkspaceFactory extends Factory
             'url' => \Str::random(fake()->numberBetween(3, 16)),
             'name' => fake()->name(),
             'icon_id' => null,
-            'description' => fake()->realText(50)
+            'description' => fake()->realText(50),
+            'is_public' => false,
         ];
     }
 
+    public function published(): WorkspaceFactory
+    {
+        return $this->state(fn(array $attributes) => [
+            'is_public' => true,
+        ]);
+    }
 }

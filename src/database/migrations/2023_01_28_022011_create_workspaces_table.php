@@ -20,6 +20,7 @@ return new class extends Migration
             $table->string('name');
             $table->string('icon_id')->nullable();
             $table->string('description')->nullable();
+            $table->boolean('is_public');
             $table->timestamps();
             $table->softDeletes();
 

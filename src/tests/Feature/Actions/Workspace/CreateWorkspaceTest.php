@@ -30,10 +30,7 @@ class CreateWorkspaceTest extends TestCase
 
         \Storage::fake();
         \Event::fake();
-        $this->createWorkspace = new CreateWorkspace(
-            new UploadFile(),
-            new RemoveFile(),
-        );
+        $this->createWorkspace = new CreateWorkspace();
     }
 
     /**
@@ -42,9 +39,8 @@ class CreateWorkspaceTest extends TestCase
     public function testHandle_ValidData_WorkspaceReturned(): void
     {
         $user = User::factory()->create();
-        $icon = UploadedFile::fake()->image('test-icon');
 
-        $workspace = $this->createWorkspace->handle(ownerId: $user->id, url: 'test-url', name: 'test-name', icon: $icon, description: 'test-description');
+        $workspace = $this->createWorkspace->handle(ownerId: $user->id, url: 'test-url', name: 'test-name', description: 'test-description', isPublic: true);
 
         $this->assertInstanceOf(Workspace::class, $workspace);
         $this->assertTrue(\Str::isUuid($workspace->id));
@@ -52,51 +48,29 @@ class CreateWorkspaceTest extends TestCase
         $this->assertSame('test-url', $workspace->url);
         $this->assertSame('test-name', $workspace->name);
         $this->assertSame('test-description', $workspace->description);
-        $this->assertInstanceOf(File::class, File::find($workspace->icon_id));
+        $this->assertTrue($workspace->is_public);
     }
 
     /**
      * @throws \Throwable
      */
-    public function testHandle_ValidData_WorkspaceParticipationSettingCreated(): void
+    public function testHandle_CreateTowWorkspace_TooManyWorkspacesReturned(): void
     {
         $user = User::factory()->create();
-        $icon = UploadedFile::fake()->image('test-icon');
 
-        $workspace = $this->createWorkspace->handle(ownerId: $user->id, url: 'test-url', name: 'test-name', icon: $icon, description: 'test-description');
+        Workspace::factory(['owner_id' => $user->id])->create();
+        $error = $this->createWorkspace->handle(ownerId: $user->id, url: 'test-url-2', name: 'test-name-2');
 
-        $setting = WorkspaceParticipationSetting::find($workspace->id);
-
-        $this->assertInstanceOf(WorkspaceParticipationSetting::class, $setting);
-        $this->assertSame(WorkspaceParticipationSettingMethod::default()->value, $setting->method);
+        $this->assertSame(WorkspaceErrorCode::TooManyWorkspaces, $error);
     }
 
     /**
      * @throws \Throwable
      */
-    public function testHandle_ValidData_WorkspacePublicationSettingCreated(): void
+    public function testHandle_InvalidUserId_InvalidUserIdReturned(): void
     {
-        $user = User::factory()->create();
-        $icon = UploadedFile::fake()->image('test-icon');
+        $error = $this->createWorkspace->handle(ownerId: $this->faker->uuid(), url: 'test-url', name: 'test-name');
 
-        $workspace = $this->createWorkspace->handle(ownerId: $user->id, url: 'test-url', name: 'test-name', icon: $icon, description: 'test-description');
-
-        $setting = WorkspacePublicationSetting::find($workspace->id);
-
-        $this->assertInstanceOf(WorkspacePublicationSetting::class, $setting);
-        $this->assertSame(WorkspacePublicationSettingState::default()->value, $setting->state);
-    }
-
-
-    /**
-     * @throws \Throwable
-     */
-    public function testHandle_UserNotExists_UserNotExistsCodeReturned(): void
-    {
-        $icon = UploadedFile::fake()->image('test-icon');
-
-        $error = $this->createWorkspace->handle(ownerId: $this->faker->uuid(), url: 'test-url', name: 'test-name', icon: $icon, description: 'test-description');
-
-        $this->assertSame(WorkspaceErrorCode::UserNotExists, $error);
+        $this->assertSame(WorkspaceErrorCode::InvalidUserId, $error);
     }
 }
