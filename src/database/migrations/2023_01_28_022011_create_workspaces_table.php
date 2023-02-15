@@ -18,14 +18,12 @@ return new class extends Migration
             $table->uuid('owner_id');
             $table->string('url')->unique();
             $table->string('name');
-            $table->string('icon_id')->nullable();
             $table->string('description')->nullable();
             $table->boolean('is_public');
             $table->timestamps();
             $table->softDeletes();
 
             $table->foreign('owner_id')->references('id')->on('users');
-            $table->foreign('icon_id')->references('id')->on('files');
         });
     }
 

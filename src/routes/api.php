@@ -15,3 +15,4 @@ use Illuminate\Support\Facades\Route;
 */
 
 require 'api/auth/index.php';
+require 'api/workspace/index.php';
