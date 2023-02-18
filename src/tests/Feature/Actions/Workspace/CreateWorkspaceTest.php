@@ -9,6 +9,8 @@ use App\Actions\Workspace\WorkspaceErrorCode;
 use App\Models\Shared\File;
 use App\Models\User;
 use App\Models\Workspace\Workspace;
+use App\Models\Workspace\WorkspaceAccount;
+use App\Models\Workspace\WorkspaceAccountRole;
 use App\Models\Workspace\WorkspaceParticipationSetting;
 use App\Models\Workspace\WorkspaceParticipationSettingMethod;
 use App\Models\Workspace\WorkspacePublicationSetting;
@@ -40,7 +42,8 @@ class CreateWorkspaceTest extends TestCase
     {
         $user = User::factory()->create();
 
-        $workspace = $this->createWorkspace->handle(ownerId: $user->id, url: 'test-url', name: 'test-name', description: 'test-description', isPublic: true);
+        ['workspace' => $workspace, 'workspace_account' => $workspaceAccount] = $this->createWorkspace
+            ->handle(ownerId: $user->id, url: 'test-url', name: 'test-name', description: 'test-description', isPublic: true);
 
         $this->assertInstanceOf(Workspace::class, $workspace);
         $this->assertTrue(\Str::isUuid($workspace->id));
@@ -49,6 +52,12 @@ class CreateWorkspaceTest extends TestCase
         $this->assertSame('test-name', $workspace->name);
         $this->assertSame('test-description', $workspace->description);
         $this->assertTrue($workspace->is_public);
+
+        $this->assertInstanceOf(WorkspaceAccount::class, $workspaceAccount);
+        $this->assertTrue(\Str::isUuid($workspaceAccount->id));
+        $this->assertSame($user->id, $workspaceAccount->user_id);
+        $this->assertSame($workspace->id, $workspaceAccount->workspace_id);
+        $this->assertSame(WorkspaceAccountRole::Administrator->value, $workspaceAccount->role);
     }
 
     /**

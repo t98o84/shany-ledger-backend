@@ -7,6 +7,7 @@ use App\Actions\Workspace\WorkspaceErrorCode;
 use App\Exceptions\ProblemDetails\ProblemDetailsException;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Workspace\CreateWorkspaceRequest;
+use App\Http\Resources\Workspace\WorkspaceAccountResource;
 use App\Http\Resources\Workspace\WorkspaceResource;
 
 class WorkspaceController extends Controller
@@ -29,6 +30,12 @@ class WorkspaceController extends Controller
             throw $workspace->toProblemDetailException();
         }
 
-        return response()->json(WorkspaceResource::make($workspace), 201);
+        return response()->json(
+            [
+                'workspace' => WorkspaceResource::make($workspace['workspace']),
+                'workspace_account' => WorkspaceAccountResource::make($workspace['workspace_account'])
+            ],
+            201
+        );
     }
 }

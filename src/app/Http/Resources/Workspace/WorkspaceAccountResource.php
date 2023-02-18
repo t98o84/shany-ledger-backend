@@ -4,7 +4,7 @@ namespace App\Http\Resources\Workspace;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class WorkspaceResource extends JsonResource
+class WorkspaceAccountResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -16,14 +16,15 @@ class WorkspaceResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'owner_id' => $this->owner_id,
-            'url' => $this->url,
-            'name' => $this->name,
-            'description' => $this->description,
-            'is_public' => $this->is_public,
-            'icon' => $this->icon?->file?->url,
+            'workspace_id' => $this->workspace_id,
+            'role' => $this->role,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
+            'user' => [
+                'id' => $this->user->id,
+                'name' => $this->user->name,
+                'avatar' => $this->user->avatar?->file?->url,
+            ],
         ];
     }
 }

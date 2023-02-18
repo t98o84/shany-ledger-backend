@@ -3,6 +3,7 @@
 namespace Tests\Feature\Controllers\Workspace;
 
 use App\Models\User;
+use App\Models\Workspace\WorkspaceAccountRole;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Testing\Fluent\AssertableJson;
@@ -28,13 +29,26 @@ class WorkspaceControllerTest extends TestCase
         $response
             ->assertCreated()
             ->assertJson(fn(AssertableJson $json) => $json
-                ->whereType('id', 'string')
-                ->where('owner_id', $user->id)
-                ->where('url', 'test-url')
-                ->where('name', 'test name')
-                ->where('description', 'test description')
-                ->where('is_public', false)
-                ->etc()
+                ->has('workspace', fn(AssertableJson $json) => $json
+                    ->whereType('id', 'string')
+                    ->where('owner_id', $user->id)
+                    ->where('url', 'test-url')
+                    ->where('name', 'test name')
+                    ->where('description', 'test description')
+                    ->where('is_public', false)
+                    ->etc()
+                )->has('workspace_account', fn(AssertableJson $json) => $json
+                    ->whereType('id', 'string')
+                    ->whereType('workspace_id', 'string')
+                    ->where('role', WorkspaceAccountRole::Administrator->value)
+                    ->whereType('created_at', 'string')
+                    ->whereType('updated_at', 'string')
+                    ->has('user', fn(AssertableJson $json) => $json
+                        ->where('id', $user->id)
+                        ->where('name', $user->name)
+                        ->where('avatar', null)
+                    )->etc()
+                )
             );
     }
 

@@ -2,6 +2,7 @@
 
 namespace App\Models\Workspace;
 
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -28,6 +29,16 @@ class Workspace extends Model
     public function icon(): \Illuminate\Database\Eloquent\Relations\HasOne
     {
         return $this->hasOne(WorkspaceIcon::class);
+    }
+
+    public function accounts(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(WorkspaceAccount::class);
+    }
+
+    public function owner(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(User::class, 'owner_id');
     }
 
     public static function buildFilePath(string $id): string

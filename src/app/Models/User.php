@@ -4,6 +4,8 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use App\Models\Shared\File;
+use App\Models\Workspace\Workspace;
+use App\Models\Workspace\WorkspaceAccount;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -58,6 +60,16 @@ class User extends Authenticatable
     public function avatar(): \Illuminate\Database\Eloquent\Relations\HasOne
     {
         return $this->hasOne(UserAvatar::class);
+    }
+
+    public function workspaceAccounts()
+    {
+        return $this->hasMany(WorkspaceAccount::class);
+    }
+
+    public function workspaces()
+    {
+        return $this->belongsToMany(Workspace::class, WorkspaceAccount::class);
     }
 
     public static function hashPassword(string $password): string

@@ -3,6 +3,7 @@
 namespace App\Events\Workspace;
 
 use App\Models\Workspace\Workspace;
+use App\Models\Workspace\WorkspaceAccount;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PresenceChannel;
@@ -15,7 +16,7 @@ class CreatedWorkspace
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    public function __construct(public readonly Workspace $workspace)
+    public function __construct(public readonly Workspace $workspace, public readonly WorkspaceAccount $workspaceAccount)
     {
     }
 }
