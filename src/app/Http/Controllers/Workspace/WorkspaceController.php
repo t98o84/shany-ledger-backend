@@ -3,10 +3,12 @@
 namespace App\Http\Controllers\Workspace;
 
 use App\Actions\Workspace\CreateWorkspace;
+use App\Actions\Workspace\UpdateWorkspace;
 use App\Actions\Workspace\WorkspaceErrorCode;
 use App\Exceptions\ProblemDetails\ProblemDetailsException;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Workspace\CreateWorkspaceRequest;
+use App\Http\Requests\Workspace\UpdateWorkspaceRequest;
 use App\Http\Resources\Workspace\WorkspaceAccountResource;
 use App\Http\Resources\Workspace\WorkspaceResource;
 
@@ -37,5 +39,23 @@ class WorkspaceController extends Controller
             ],
             201
         );
+    }
+
+    public function update(string $workspace, UpdateWorkspaceRequest $request, UpdateWorkspace $updateWorkspace)
+    {
+        $updatedWorkspace = $updateWorkspace->handle(
+            userId: \Auth::id(),
+            workspaceId: $workspace,
+            url: $request->input('url'),
+            name: $request->input('name'),
+            description: $request->input('description'),
+            isPublic: $request->input('is_public'),
+        );
+
+        if ($updatedWorkspace instanceof WorkspaceErrorCode) {
+            throw $updatedWorkspace->toProblemDetailException();
+        }
+
+        return response()->noContent();
     }
 }

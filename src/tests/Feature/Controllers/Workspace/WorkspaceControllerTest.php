@@ -3,6 +3,8 @@
 namespace Tests\Feature\Controllers\Workspace;
 
 use App\Models\User;
+use App\Models\Workspace\Workspace;
+use App\Models\Workspace\WorkspaceAccount;
 use App\Models\Workspace\WorkspaceAccountRole;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
@@ -78,11 +80,30 @@ class WorkspaceControllerTest extends TestCase
             );
     }
 
-    public function testCreate_UnauthorizedUser_UnauthorizedResponse(): void
+    public function testUpdate_ValidData_NoContentResponse(): void
     {
-        User::factory()->create();
+        $user = User::factory()->create();
+        Sanctum::actingAs($user);
 
-        $response = $this->postJson(route('workspace.store'), [
+        $workspace = Workspace::factory(['owner_id' => $user->id])->create();
+        WorkspaceAccount::factory(['user_id' => $user->id, 'workspace_id' => $workspace->id])->create();
+
+        $response = $this->patchJson(route('workspace.update', ['workspace' => $workspace->id]), [
+            'url' => 'test-url',
+            'name' => 'test name',
+            'description' => 'test description',
+            'is_public' => false,
+        ]);
+
+        $response->assertNoContent();
+    }
+
+    public function testUpdate_UnauthorizedUser_UnauthorizedResponse(): void
+    {
+        $user = User::factory()->create();
+        $workspace = Workspace::factory(['owner_id' => $user->id])->create();
+
+        $response = $this->patchJson(route('workspace.update', ['workspace' => $workspace->id]), [
             'url' => 'invalid url',
             'name' => 'test name',
             'description' => 'test description',

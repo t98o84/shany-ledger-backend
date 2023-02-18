@@ -10,4 +10,6 @@ return [
     WorkspaceErrorCode::FileIOFailed->code() => 'ファイルの読み込みもしくは書き込みに失敗しました。',
 
     WorkspaceErrorCode::InvalidUserId->code() => 'ユーザーIDが無効です。',
+
+    WorkspaceErrorCode::InvalidWorkspaceId->code() => 'ワークスペースのIDが無効です。',
 ];
