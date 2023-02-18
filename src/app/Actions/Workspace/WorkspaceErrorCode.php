@@ -24,6 +24,8 @@ enum WorkspaceErrorCode: string implements ErrorCode
 
     case InvalidUserId = 'InvalidUserId';
 
+    case InvalidWorkspaceId = 'InvalidWorkspaceId';
+
     case TooManyWorkspaces = 'TooManyWorkspaces';
 
     public function messageBaseKey(): string

@@ -23,4 +23,24 @@ class WorkspaceAccount extends Model
     {
         return $this->belongsTo(Workspace::class);
     }
+
+    public function isAdminister(): bool
+    {
+        return $this->role === WorkspaceAccountRole::Administrator->value;
+    }
+
+    public function isEditor(): bool
+    {
+        return $this->role === WorkspaceAccountRole::Editor->value;
+    }
+
+    public function isViewer(): bool
+    {
+        return $this->role === WorkspaceAccountRole::Viewer->value;
+    }
+
+    public function isGuest(): bool
+    {
+        return $this->role === WorkspaceAccountRole::Guest->value;
+    }
 }
