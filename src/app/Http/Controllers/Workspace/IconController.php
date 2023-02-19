@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Workspace;
 
+use App\Actions\Workspace\DeleteIcon;
 use App\Actions\Workspace\UpdateIcon;
 use App\Actions\Workspace\WorkspaceErrorCode;
 use App\Exceptions\ProblemDetails\ProblemDetailsException;
@@ -27,5 +28,23 @@ class IconController extends Controller
         }
 
         return response()->json(['icon' => $icon->url()]);
+    }
+
+    /**
+     * @throws \Throwable
+     * @throws ProblemDetailsException
+     */
+    public function delete(string $workspace, DeleteIcon $deleteIcon)
+    {
+        $error = $deleteIcon->handle(
+            userId: \Auth::id(),
+            workspaceId: $workspace,
+        );
+
+        if ($error instanceof WorkspaceErrorCode) {
+            throw $error->toProblemDetailException();
+        }
+
+        return response()->noContent();
     }
 }

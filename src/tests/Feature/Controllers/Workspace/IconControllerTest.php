@@ -2,7 +2,6 @@
 
 namespace Tests\Feature\Controllers\Workspace;
 
-use App\Models\User;
 use App\Models\Workspace\Workspace;
 use App\Models\Workspace\WorkspaceAccount;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -16,8 +15,6 @@ class IconControllerTest extends TestCase
 {
     use RefreshDatabase, WithFaker;
 
-    private User $owner;
-
     private readonly Workspace $workspace;
 
     private readonly WorkspaceAccount $workspaceAccount;
@@ -26,14 +23,13 @@ class IconControllerTest extends TestCase
     {
         parent::setUp();
 
-        $this->owner = User::factory()->create();
-        $this->workspace = Workspace::factory(['owner_id' => $this->owner->id])->create();
-        $this->workspaceAccount = WorkspaceAccount::factory(['user_id' => $this->owner->id, 'workspace_id' => $this->workspace->id])->create();
+        $this->workspace = Workspace::factory()->hasOwner()->create();
+        $this->workspaceAccount = WorkspaceAccount::factory(['user_id' => $this->workspace->owner->id, 'workspace_id' => $this->workspace->id])->create();
     }
 
     public function testUpdate_ValidIcon_IconUrlResponse(): void
     {
-        Sanctum::actingAs($this->owner);
+        Sanctum::actingAs($this->workspace->owner);
 
         $response = $this->putJson(route('workspace.update-icon', ['workspace' => $this->workspace->id]), [
             'icon' => UploadedFile::fake()->image('new-icon.jpg', 128, 128),
@@ -48,7 +44,7 @@ class IconControllerTest extends TestCase
 
     public function testUpdate_NotImageFile_BadRequestResponse(): void
     {
-        Sanctum::actingAs($this->owner);
+        Sanctum::actingAs($this->workspace->owner);
 
         $response = $this->putJson(route('workspace.update-icon', ['workspace' => $this->workspace->id]));
 
@@ -60,6 +56,23 @@ class IconControllerTest extends TestCase
         $response = $this->putJson(route('workspace.update-icon', ['workspace' => $this->workspace->id]), [
             'icon' => UploadedFile::fake()->image('new-icon.jpg'),
         ]);
+
+        $response->assertUnauthorized();
+    }
+
+
+    public function testDeleteIcon_ValidData_NoContentResponse(): void
+    {
+        Sanctum::actingAs($this->workspace->owner);
+
+        $response = $this->deleteJson(route('workspace.delete-icon', ['workspace' => $this->workspace->id]));
+
+        $response->assertNoContent();
+    }
+
+    public function testDeleteIcon_UnauthorizedUse_UnauthorizedResponse(): void
+    {
+        $response = $this->deleteJson(route('workspace.delete-icon', ['workspace' => $this->workspace->id]));
 
         $response->assertUnauthorized();
     }
