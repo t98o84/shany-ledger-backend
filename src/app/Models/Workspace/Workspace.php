@@ -41,8 +41,8 @@ class Workspace extends Model
         return $this->belongsTo(User::class, 'owner_id');
     }
 
-    public static function buildFilePath(string $id): string
+    public function baseFilePath(): string
     {
-        return static::BASE_FILE_PATH . "/$id";
+        return static::BASE_FILE_PATH . "/$this->id";
     }
 }

@@ -12,7 +12,7 @@ class WorkspaceIcon extends Model
 {
     use HasFactory;
 
-    protected $primaryKey = 'user_id';
+    protected $primaryKey = 'workspace_id';
 
     public $incrementing = false;
 
