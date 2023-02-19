@@ -4,10 +4,12 @@ namespace Tests\Feature\Actions\Workspace;
 
 use App\Actions\Workspace\UpdateIcon;
 use App\Actions\Shared\UploadFile;
+use App\Actions\Workspace\WorkspaceErrorCode;
 use App\Models\Shared\File;
 use App\Models\User;
 use App\Models\Workspace\Workspace;
 use App\Models\Workspace\WorkspaceAccount;
+use App\Models\Workspace\WorkspaceAccountRole;
 use App\Models\Workspace\WorkspaceIcon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
@@ -87,5 +89,30 @@ class UpdateIconTest extends TestCase
         $this->assertSame('new_icon', $newIcon->file->original_name);
         $this->assertDatabaseCount(WorkspaceIcon::class, 1);
         $this->assertDatabaseCount(File::class, 1);
+    }
+
+
+    /**
+     * @dataProvider unauthorizedWorkspaceAccountRoleProvider
+     * @throws \Throwable
+     */
+    public function testHandle_WorkspaceMember_UnauthorizedReturned(WorkspaceAccountRole $role): void
+    {
+        $user = User::factory()->create();
+        WorkspaceAccount::factory(['user_id' => $user->id, 'workspace_id' => $this->workspace->id, 'role' => $role->value])->create();
+        $uploadIcon = UploadedFile::fake()->create('new_icon');
+
+        $error = $this->action->handle(userId: $user->id, workspaceId: $this->workspace->id, uploadedIcon: $uploadIcon);
+
+        $this->assertSame(WorkspaceErrorCode::Unauthorized, $error);
+    }
+
+    public function unauthorizedWorkspaceAccountRoleProvider()
+    {
+        return [
+            WorkspaceAccountRole::Editor->value => [WorkspaceAccountRole::Editor],
+            WorkspaceAccountRole::Viewer->value => [WorkspaceAccountRole::Viewer],
+            WorkspaceAccountRole::Guest->value => [WorkspaceAccountRole::Guest],
+        ];
     }
 }
