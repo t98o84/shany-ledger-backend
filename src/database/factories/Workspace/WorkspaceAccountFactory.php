@@ -2,6 +2,8 @@
 
 namespace Database\Factories\Workspace;
 
+use App\Models\User;
+use App\Models\Workspace\Workspace;
 use App\Models\Workspace\WorkspaceAccountRole;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -19,6 +21,8 @@ class WorkspaceAccountFactory extends Factory
     {
         return [
             'id' => (string) \Str::orderedUuid(),
+            'user_id' => User::factory(),
+            'workspace_id' => Workspace::factory(),
             'role' => WorkspaceAccountRole::Administrator->value,
         ];
     }

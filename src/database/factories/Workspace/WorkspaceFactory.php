@@ -2,6 +2,7 @@
 
 namespace Database\Factories\Workspace;
 
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -18,6 +19,7 @@ class WorkspaceFactory extends Factory
     {
         return [
             'id' => (string) \Str::orderedUuid(),
+            'owner_id' => User::factory(),
             'url' => \Str::random(fake()->numberBetween(3, 16)),
             'name' => fake()->name(),
             'description' => fake()->realText(50),
