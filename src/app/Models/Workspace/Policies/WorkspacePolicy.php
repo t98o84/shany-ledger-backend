@@ -15,4 +15,9 @@ class WorkspacePolicy
     {
         return $user->id === $workspace->owner_id || $account->isAdminister();
     }
+
+    public function delete(User $user, Workspace $workspace, WorkspaceAccount $account): bool
+    {
+        return $user->id === $workspace->owner_id || $account->isAdminister();
+    }
 }
