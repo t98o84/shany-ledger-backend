@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Workspace;
 
 use App\Actions\Workspace\CreateWorkspace;
+use App\Actions\Workspace\DeleteWorkspace;
 use App\Actions\Workspace\UpdateWorkspace;
 use App\Actions\Workspace\WorkspaceErrorCode;
 use App\Exceptions\ProblemDetails\ProblemDetailsException;
@@ -54,6 +55,17 @@ class WorkspaceController extends Controller
 
         if ($updatedWorkspace instanceof WorkspaceErrorCode) {
             throw $updatedWorkspace->toProblemDetailException();
+        }
+
+        return response()->noContent();
+    }
+
+    public function delete(string $workspace, DeleteWorkspace $deleteWorkspace)
+    {
+        $error = $deleteWorkspace->handle(\Auth::id(), $workspace);
+
+        if ($error instanceof WorkspaceErrorCode) {
+            throw $error->toProblemDetailException();
         }
 
         return response()->noContent();

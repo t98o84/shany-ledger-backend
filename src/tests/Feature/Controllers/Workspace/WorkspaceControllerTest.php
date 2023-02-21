@@ -16,6 +16,18 @@ class WorkspaceControllerTest extends TestCase
 {
     use RefreshDatabase, WithFaker;
 
+    private readonly Workspace $workspace;
+
+    private readonly WorkspaceAccount $workspaceAccount;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->workspace = Workspace::factory()->hasOwner()->create();
+        $this->workspaceAccount = WorkspaceAccount::factory(['user_id' => $this->workspace->owner->id, 'workspace_id' => $this->workspace->id])->create();
+    }
+
     public function testCreate_ValidData_StoredWorkspaceResponse(): void
     {
         $user = User::factory()->create();
@@ -82,13 +94,9 @@ class WorkspaceControllerTest extends TestCase
 
     public function testUpdate_ValidData_NoContentResponse(): void
     {
-        $user = User::factory()->create();
-        Sanctum::actingAs($user);
+        Sanctum::actingAs($this->workspace->owner);
 
-        $workspace = Workspace::factory(['owner_id' => $user->id])->create();
-        WorkspaceAccount::factory(['user_id' => $user->id, 'workspace_id' => $workspace->id])->create();
-
-        $response = $this->patchJson(route('workspace.update', ['workspace' => $workspace->id]), [
+        $response = $this->patchJson(route('workspace.update', ['workspace' => $this->workspace->id]), [
             'url' => 'test-url',
             'name' => 'test name',
             'description' => 'test description',
@@ -100,15 +108,28 @@ class WorkspaceControllerTest extends TestCase
 
     public function testUpdate_UnauthorizedUser_UnauthorizedResponse(): void
     {
-        $user = User::factory()->create();
-        $workspace = Workspace::factory(['owner_id' => $user->id])->create();
-
-        $response = $this->patchJson(route('workspace.update', ['workspace' => $workspace->id]), [
+        $response = $this->patchJson(route('workspace.update', ['workspace' => $this->workspace->id]), [
             'url' => 'invalid url',
             'name' => 'test name',
             'description' => 'test description',
             'is_public' => false,
         ]);
+
+        $response->assertUnauthorized();
+    }
+
+    public function testDelete_ValidData_NoContentResponse(): void
+    {
+        Sanctum::actingAs($this->workspace->owner);
+
+        $response = $this->deleteJson(route('workspace.delete-icon', ['workspace' => $this->workspace->id]));
+
+        $response->assertNoContent();
+    }
+
+    public function testDelete_UnauthorizedUse_UnauthorizedResponse(): void
+    {
+        $response = $this->deleteJson(route('workspace.delete-icon', ['workspace' => $this->workspace->id]));
 
         $response->assertUnauthorized();
     }
