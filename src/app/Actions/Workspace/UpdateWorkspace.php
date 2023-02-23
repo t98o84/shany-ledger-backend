@@ -31,7 +31,7 @@ class UpdateWorkspace
             'is_public' => $isPublic,
         ])->save();
 
-        \App\Events\Workspace\UpdateWorkspace::dispatch($workspace, $workspaceAccount);
+        \App\Events\Workspace\UpdatedWorkspace::dispatch($workspace, $workspaceAccount);
 
         return $workspace;
 

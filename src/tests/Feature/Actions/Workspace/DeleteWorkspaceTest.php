@@ -59,7 +59,7 @@ class DeleteWorkspaceTest extends TestCase
         Sanctum::actingAs($this->workspace->owner);
         $this->action->handle(userId: $this->workspace->owner->id, workspaceId: $this->workspace->id);
 
-        \Event::assertDispatched(\App\Events\Workspace\DeleteWorkspace::class);
+        \Event::assertDispatched(\App\Events\Workspace\DeletedWorkspace::class);
     }
 
     /**

@@ -62,7 +62,7 @@ class UpdateWorkspaceTest extends TestCase
         $this->updateWorkspace
             ->handle(userId: $user->id, workspaceId: $workspace->id,  url: 'test-url', name: 'test-name', description: 'test-description', isPublic: true);
 
-        \Event::assertDispatched(\App\Events\Workspace\UpdateWorkspace::class);
+        \Event::assertDispatched(\App\Events\Workspace\UpdatedWorkspace::class);
     }
 
     public function testHandle_Administer_WorkspaceReturned(): void

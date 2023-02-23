@@ -51,7 +51,7 @@ class UpdateIcon
                 return WorkspaceErrorCode::FileIOFailed;
             }
 
-            \App\Events\Workspace\UpdateIcon::dispatch($icon, $workspaceAccount);
+            \App\Events\Workspace\UpdatedIcon::dispatch($icon, $workspaceAccount);
 
             \DB::commit();
 

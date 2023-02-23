@@ -66,7 +66,7 @@ class UpdateIconTest extends TestCase
 
         $this->action->handle(userId: $this->owner->id, workspaceId: $this->workspace->id, uploadedIcon: $newIcon);
 
-       \Event::assertDispatched(\App\Events\Workspace\UpdateIcon::class);
+       \Event::assertDispatched(\App\Events\Workspace\UpdatedIcon::class);
     }
 
     /**

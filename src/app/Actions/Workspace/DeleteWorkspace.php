@@ -26,7 +26,7 @@ class DeleteWorkspace
 
         $workspace->delete();
 
-        \App\Events\Workspace\DeleteWorkspace::dispatch($workspace, $workspaceAccount);
+        \App\Events\Workspace\DeletedWorkspace::dispatch($workspace, $workspaceAccount);
 
         return true;
     }

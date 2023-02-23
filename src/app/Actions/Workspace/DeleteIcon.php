@@ -50,7 +50,7 @@ class DeleteIcon
             $workspace->icon->delete();
 
 
-            \App\Events\Workspace\DeleteIcon::dispatch($workspace, $workspaceAccount);
+            \App\Events\Workspace\DeletedIcon::dispatch($workspace, $workspaceAccount);
 
             \DB::commit();
 
