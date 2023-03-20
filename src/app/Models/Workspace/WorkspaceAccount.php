@@ -43,4 +43,24 @@ class WorkspaceAccount extends Model
     {
         return $this->role === WorkspaceAccountRole::Guest->value;
     }
+
+    public function isAdministerHigher(): bool
+    {
+        return $this->isAdminister();
+    }
+
+    public function isEditorHigher(): bool
+    {
+        return  $this->isAdminister() || $this->isEditor();
+    }
+
+    public function isViewerHigher(): bool
+    {
+        return $this->isAdminister() || $this->isEditor() || $this->isViewer();
+    }
+
+    public function isGuestHigher(): bool
+    {
+        return  $this->isAdminister() || $this->isEditor() || $this->isViewer() || $this->isGuest();
+    }
 }
