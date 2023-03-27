@@ -16,4 +16,9 @@ class LedgerPolicy
     {
         return $user->id === $workspace->owner_id || $account?->isEditorHigher();
     }
+
+    public function update(User $user, Ledger $ledger, Workspace $workspace, ?WorkspaceAccount $account): bool
+    {
+        return $user->id === $workspace->owner_id || $account?->isEditorHigher();
+    }
 }
