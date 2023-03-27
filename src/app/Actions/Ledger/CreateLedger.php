@@ -22,9 +22,9 @@ class CreateLedger
                 return LedgerErrorCode::TooManyLedgers;
             }
 
-            $ledger = $request->ledger;
+            $ledger = clone $request->ledger;
             $request->workspace->ledgers()->save($ledger);
-            $unit = $request->ledgerUnit;
+            $unit = clone $request->ledgerUnit;
             $ledger->unit()->save($unit);
             $ledger->setRelation('unit', $unit);
 

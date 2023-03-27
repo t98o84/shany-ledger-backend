@@ -23,9 +23,9 @@ class Ledger extends Model
         'public_status' => LedgerPublicStatus::class,
     ];
 
-    public function workspace(): \Illuminate\Database\Eloquent\Relations\HasOne
+    public function workspace(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
-        return $this->hasOne(Workspace::class);
+        return $this->belongsTo(Workspace::class);
     }
 
     public function unit(): \Illuminate\Database\Eloquent\Relations\HasOne

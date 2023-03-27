@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Model;
  */
 trait HasOperators
 {
-    protected static function bootHasOperator(): void
+    protected static function bootHasOperators(): void
     {
         static::creating(static function (self $model) {
             if ($model->creatorColumn()) {
