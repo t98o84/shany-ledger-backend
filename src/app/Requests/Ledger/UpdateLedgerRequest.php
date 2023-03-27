@@ -24,9 +24,7 @@ class UpdateLedgerRequest
      */
     public function __construct(array $params)
     {
-        $this->ledger = Ledger::where('workspace_id', isset($params['workspace_id']) && is_string($params['workspace_id']) ? $params['workspace_id'] : null)
-            ->findOrFail(isset($params['id']) && is_string($params['id']) ? $params['id'] : null);
-
+        $this->ledger = Ledger::where('workspace_id', $params['workspace_id'])->findOrFail($params['id']);
         $this->authorize();
         $this->ledger->fill($this->validate($params));
     }

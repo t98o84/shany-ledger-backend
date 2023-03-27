@@ -30,11 +30,7 @@ class CreateLedgerRequest
      */
     public function __construct(array $params)
     {
-        $this->workspace = Workspace::findOrFail(
-            isset($params['workspace_id']) && is_string($params['workspace_id'])
-                ? $params['workspace_id']
-                : null
-        );
+        $this->workspace = Workspace::findOrFail($params['workspace_id']);
 
         $this->authorize();
         $this->validate($params);

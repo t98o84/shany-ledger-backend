@@ -35,11 +35,11 @@ class LedgerResource extends JsonResource
                 'expiration_ended_at' => $this->public_status_anyone_setting->expiration_ended_at,
             ]),
 
-            'unit' => [
+            'unit' => $this->when(!is_null($this->unit), fn() => [
                 'symbol' => $this->unit->symbol,
                 'display_position' => $this->unit->display_position,
                 'description' => $this->unit->description,
-            ],
+            ]),
 
             'workspace' => [
                 'id' => $this->workspace->id,

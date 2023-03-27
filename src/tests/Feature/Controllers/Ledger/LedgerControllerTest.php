@@ -3,7 +3,7 @@
 namespace Tests\Feature\Controllers\Ledger;
 
 use App\Events\Ledger\LedgerCreated;
-use App\Models\User;
+use App\Models\Ledger\Ledger;
 use App\ValueObjects\Ledger\LedgerPublicStatus;
 use App\ValueObjects\Ledger\LedgerUnitDisplayPosition;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -18,6 +18,8 @@ class LedgerControllerTest extends TestCase
 {
     use RefreshDatabase, WithFaker, HasWorkspace;
 
+    private Ledger $ledger;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -25,6 +27,7 @@ class LedgerControllerTest extends TestCase
         \Storage::fake();
         \Event::fake([LedgerCreated::class]);
         $this->initWorkspace();
+        $this->ledger = $this->workspace->ledgers()->create(Ledger::factory()->make()->toArray());
     }
 
     public function testCreate_ValidData_StoredLedgerResponse(): void
@@ -68,5 +71,32 @@ class LedgerControllerTest extends TestCase
             );
     }
 
+    public function testUpdate_ValidData_UpdatedLedgerResponse(): void
+    {
+        Sanctum::actingAs($this->owner);
 
+        $response = $this->patchJson(route('ledger.update', ['workspace' => $this->workspace->id, 'ledger' => $this->ledger->id]), [
+            'name' => 'Update new name',
+            'description' => 'Update new description',
+        ]);
+
+        $response
+            ->assertOK()
+            ->assertJson(fn(AssertableJson $json) => $json
+                ->whereType('id', 'string')
+                ->where('name', 'Update new name')
+                ->where('description', 'Update new description')
+                ->where('public_status', LedgerPublicStatus::WorkspaceParticipant->value)
+                ->has('workspace', fn(AssertableJson $json) => $json
+                    ->where('id', $this->workspace->id)
+                    ->where('url', $this->workspace->url)
+                    ->where('name', $this->workspace->name)
+                    ->where('description', $this->workspace->description)
+                    ->etc()
+                )
+                ->whereType('created_at', 'string')
+                ->whereType('updated_at', 'string')
+                ->has('updater', OperatorResource::json($this->owner))
+            );
+    }
 }

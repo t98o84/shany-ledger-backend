@@ -8,9 +8,6 @@ use App\Requests\Ledger\UpdateLedgerRequest;
 
 class UpdateLedger
 {
-    /**
-     * @throws \Throwable
-     */
     public function handle(UpdateLedgerRequest $request): Ledger
     {
         $ledger = clone $request->ledger;
