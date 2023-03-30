@@ -20,6 +20,7 @@ class Ledger extends Model
     ];
 
     protected $casts = [
+        'type' => LedgerType::class,
         'public_status' => LedgerPublicStatus::class,
     ];
 
@@ -43,6 +44,7 @@ class Ledger extends Model
         return [
             'id' => ['bail', 'required', 'string', 'uuid', $this->getKey() ? Rule::exists($this->getTable()) : Rule::unique($this->getTable())],
             'workspace_id' => ['bail', 'required', 'string', 'uuid', Rule::exists(Workspace::make()->getTable())],
+            'type' => ['bail', 'required', 'string', Rule::enum(LedgerType::class)],
             'name' => ['bail', 'required', 'string', 'max:255'],
             'description' => ['bail', 'nullable', 'string', 'max:255'],
             'public_status' => ['bail', 'required', 'string', 'max:255', Rule::enum(LedgerPublicStatus::class)],

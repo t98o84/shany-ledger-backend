@@ -57,6 +57,7 @@ class CreateLedgerTest extends TestCase
 
         $this->assertDatabaseHas(Ledger::class, [
             'id' => $ledger->id,
+            'type' => $ledger->type,
             'name' => $request->ledger->name,
             'description' => $request->ledger->description,
             'public_status' => $request->ledger->public_status->value,
@@ -72,6 +73,7 @@ class CreateLedgerTest extends TestCase
         ]);
 
         $this->assertInstanceOf(Ledger::class, $ledger);
+        $this->assertSame($request->ledger->type, $ledger->type);
         $this->assertSame($request->ledger->name, $ledger->name);
         $this->assertSame($request->ledger->description, $ledger->description);
         $this->assertSame($request->ledger->public_status, $ledger->public_status);

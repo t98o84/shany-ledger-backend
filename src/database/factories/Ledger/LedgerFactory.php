@@ -2,6 +2,7 @@
 
 namespace Database\Factories\Ledger;
 
+use App\Models\Ledger\LedgerType;
 use App\Models\User;
 use App\Models\Workspace\Workspace;
 use App\ValueObjects\Ledger\LedgerPublicStatus;
@@ -22,6 +23,7 @@ class LedgerFactory extends Factory
         return [
             'id' => (string) \Str::orderedUuid(),
             'workspace_id' => Workspace::factory(),
+            'type' => LedgerType::Aggregation->value,
             'name' => $this->faker->word(),
             'description' => $this->faker->realText(),
             'public_status' => LedgerPublicStatus::WorkspaceParticipant->value,

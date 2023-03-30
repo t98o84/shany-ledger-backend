@@ -4,6 +4,7 @@ namespace Tests\Feature\Controllers\Ledger;
 
 use App\Events\Ledger\LedgerCreated;
 use App\Models\Ledger\Ledger;
+use App\Models\Ledger\LedgerType;
 use App\ValueObjects\Ledger\LedgerPublicStatus;
 use App\ValueObjects\Ledger\LedgerUnitDisplayPosition;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -35,6 +36,7 @@ class LedgerControllerTest extends TestCase
         Sanctum::actingAs($this->owner);
 
         $response = $this->postJson(route('ledger.store', ['workspace' => $this->workspace->id]), [
+            'type' => LedgerType::Aggregation->value,
             'name' => 'test name',
             'description' => 'test description',
             'public_status' => LedgerPublicStatus::WorkspaceParticipant->value,
@@ -49,6 +51,7 @@ class LedgerControllerTest extends TestCase
             ->assertCreated()
             ->assertJson(fn(AssertableJson $json) => $json
                 ->whereType('id', 'string')
+                ->where('type', LedgerType::Aggregation->value)
                 ->where('name', 'test name')
                 ->where('description', 'test description')
                 ->has('public_settings', fn(AssertableJson $json) => $json
@@ -87,6 +90,7 @@ class LedgerControllerTest extends TestCase
             ->assertOK()
             ->assertJson(fn(AssertableJson $json) => $json
                 ->whereType('id', 'string')
+                ->where('type', LedgerType::Aggregation->value)
                 ->where('name', 'Update new name')
                 ->where('description', 'Update new description')
                 ->has('public_settings', fn(AssertableJson $json) => $json

@@ -58,9 +58,9 @@ class UpdateLedgerRequest
     {
         return validator(
             $params,
-            \Arr::except(
+            \Arr::only(
                 $this->ledger->validationRUles(),
-                ['id', 'workspace_id', 'public_status']
+                ['name', 'description']
             )
         )->validate();
     }

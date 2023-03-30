@@ -5,6 +5,7 @@ namespace Tests\Feature\Actions\Ledger;
 use App\Actions\Ledger\UpdateLedger;
 use App\Events\Ledger\LedgerUpdated;
 use App\Models\Ledger\Ledger;
+use App\Models\Ledger\LedgerType;
 use App\Models\Workspace\WorkspaceAccount;
 use App\Models\Workspace\WorkspaceAccountRole;
 use App\Requests\Ledger\UpdateLedgerRequest;
@@ -57,7 +58,7 @@ class UpdateLedgerTest extends TestCase
             'description' => $request->ledger->description,
         ]);
 
-        $this->assertSame( $request->ledger->name, $ledger->name);
+        $this->assertSame($request->ledger->name, $ledger->name);
         $this->assertSame($request->ledger->description, $ledger->description);
         \Event::assertDispatched(LedgerUpdated::class);
     }
