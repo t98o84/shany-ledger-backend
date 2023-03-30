@@ -14,8 +14,8 @@ return new class extends Migration
             $table->boolean('allow_comments')->default(false);
             $table->boolean('allow_editing')->default(false);
             $table->boolean('allow_duplicate')->default(false);
-            $table->timestamp('expiration_started_at')->nullable();
-            $table->timestamp('expiration_ended_at')->nullable();
+            $table->dateTime('expiration_started_at')->nullable();
+            $table->dateTime('expiration_ended_at')->nullable();
             $table->timestamps();
             $table->operators();
         });

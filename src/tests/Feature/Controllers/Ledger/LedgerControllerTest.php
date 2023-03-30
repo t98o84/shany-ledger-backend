@@ -51,7 +51,10 @@ class LedgerControllerTest extends TestCase
                 ->whereType('id', 'string')
                 ->where('name', 'test name')
                 ->where('description', 'test description')
-                ->where('public_status', LedgerPublicStatus::WorkspaceParticipant->value)
+                ->has('public_settings', fn(AssertableJson $json) => $json
+                    ->where('status', LedgerPublicStatus::WorkspaceParticipant->value)
+                    ->etc()
+                )
                 ->has('unit', fn(AssertableJson $json) => $json
                     ->where('symbol', 'US')
                     ->where('display_position', LedgerUnitDisplayPosition::Left->value)
@@ -86,7 +89,10 @@ class LedgerControllerTest extends TestCase
                 ->whereType('id', 'string')
                 ->where('name', 'Update new name')
                 ->where('description', 'Update new description')
-                ->where('public_status', LedgerPublicStatus::WorkspaceParticipant->value)
+                ->has('public_settings', fn(AssertableJson $json) => $json
+                    ->where('status', LedgerPublicStatus::WorkspaceParticipant->value)
+                    ->etc()
+                )
                 ->has('workspace', fn(AssertableJson $json) => $json
                     ->where('id', $this->workspace->id)
                     ->where('url', $this->workspace->url)

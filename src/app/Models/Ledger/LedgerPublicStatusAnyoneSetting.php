@@ -28,6 +28,8 @@ class LedgerPublicStatusAnyoneSetting extends Model
         'allow_comments' => 'boolean',
         'allow_editing' => 'boolean',
         'allow_duplicate' => 'boolean',
+        'expiration_started_at' => 'datetime',
+        'expiration_ended_at' => 'datetime',
     ];
 
     public function ledger()
