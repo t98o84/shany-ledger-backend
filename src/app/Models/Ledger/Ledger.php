@@ -39,6 +39,11 @@ class Ledger extends Model
         return $this->hasOne(LedgerPublicStatusAnyoneSetting::class);
     }
 
+    public function detailSetting(): \Illuminate\Database\Eloquent\Relations\HasOne
+    {
+        return $this->hasOne($this->type->detailSettingModel());
+    }
+
     public function validationRules(): array
     {
         return [

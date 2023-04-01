@@ -27,6 +27,11 @@ class LedgerResource extends JsonResource
 
             'public_settings' => LedgerPublicStatusResource::make($this),
 
+            'detail_setting' => $this->when(
+                !is_null($this->detailSetting),
+                fn() => $this->type->detailSettingResource()::make($this->detailSetting)
+            ),
+
             'unit' => $this->when(!is_null($this->unit), fn() => [
                 'symbol' => $this->unit->symbol,
                 'display_position' => $this->unit->display_position,

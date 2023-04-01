@@ -58,6 +58,16 @@ class LedgerControllerTest extends TestCase
                     ->where('status', LedgerPublicStatus::WorkspaceParticipant->value)
                     ->etc()
                 )
+                ->has('detail_setting', fn(AssertableJson $json) => $json
+                    ->where('max_input', null)
+                    ->where('min_input', null)
+                    ->where('max_output', null)
+                    ->where('min_output', null)
+                    ->where('max_total', null)
+                    ->where('min_total', null)
+                    ->where('fixed_point_number', null)
+                    ->etc()
+                )
                 ->has('unit', fn(AssertableJson $json) => $json
                     ->where('symbol', 'US')
                     ->where('display_position', LedgerUnitDisplayPosition::Left->value)

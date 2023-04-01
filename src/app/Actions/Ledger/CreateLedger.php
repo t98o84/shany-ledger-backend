@@ -34,12 +34,20 @@ class CreateLedger
                 $ledger->setRelation('public_status_anyone_setting', $publicStatusAnyoneSetting);
             }
 
+            if ($request->detailSetting || $this->type->detailSettingModel()) {
+                $detailSetting = $request->detailSetting
+                    ? clone $request->detailSetting
+                    : $this->type->detailSettingModel()::make();
+                $ledger->detailSetting()->save($detailSetting);
+                $ledger->setRelation('detail_setting', $detailSetting);
+            }
+
             \DB::commit();
 
             LedgerCreated::dispatch($ledger, $request->workspaceAccount);
 
             return $ledger;
-        }catch (\Throwable $throwable) {
+        } catch (\Throwable $throwable) {
             \DB::rollBack();
             throw $throwable;
         }

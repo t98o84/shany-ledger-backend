@@ -6,6 +6,7 @@ use App\Actions\Ledger\CreateLedger;
 use App\Actions\Ledger\LedgerErrorCode;
 use App\Events\Ledger\LedgerCreated;
 use App\Models\Ledger\Ledger;
+use App\Models\Ledger\LedgerAggregationSetting;
 use App\Models\Ledger\LedgerPublicStatusAnyoneSetting;
 use App\Models\Ledger\LedgerUnit;
 use App\Models\Workspace\WorkspaceAccount;
@@ -68,6 +69,16 @@ class CreateLedgerTest extends TestCase
             'symbol' => $request->ledgerUnit->symbol,
             'display_position' => $request->ledgerUnit->display_position->value,
         ]);
+        $this->assertDatabaseHas(LedgerAggregationSetting::class, [
+            'ledger_id' => $ledger->id,
+            'max_input' => $request->detailSetting->max_input,
+            'min_input' => $request->detailSetting->min_input,
+            'max_output' => $request->detailSetting->max_output,
+            'min_output' => $request->detailSetting->min_output,
+            'max_total' => $request->detailSetting->max_total,
+            'min_total' => $request->detailSetting->min_total,
+            'fixed_point_number' => $request->detailSetting->fixed_point_number,
+        ]);
         $this->assertDatabaseMissing(LedgerPublicStatusAnyoneSetting::class, [
             'ledger_id' => $ledger->id,
         ]);
@@ -80,6 +91,13 @@ class CreateLedgerTest extends TestCase
         $this->assertSame($this->workspace->id, $ledger->workspace_id);
         $this->assertSame($request->ledgerUnit->symbol, $ledger->unit->symbol);
         $this->assertSame($request->ledgerUnit->display_position, $ledger->unit->display_position);
+        $this->assertSame($request->detailSetting->max_input, $ledger->detail_setting->max_input);
+        $this->assertSame($request->detailSetting->min_input, $ledger->detail_setting->min_input);
+        $this->assertSame($request->detailSetting->max_output, $ledger->detail_setting->max_output);
+        $this->assertSame($request->detailSetting->min_output, $ledger->detail_setting->min_output);
+        $this->assertSame($request->detailSetting->max_total, $ledger->detail_setting->max_total);
+        $this->assertSame($request->detailSetting->min_total, $ledger->detail_setting->min_total);
+        $this->assertSame($request->detailSetting->fixed_point_number, $ledger->detail_setting->fixed_point_number);
         \Event::assertDispatched(LedgerCreated::class);
     }
 
@@ -180,9 +198,11 @@ class CreateLedgerTest extends TestCase
     {
         $ledger = Ledger::factory()->make(['workspace_id' => $this->workspace->id]);
         $unit = LedgerUnit::factory()->make(['ledger_id' => $ledger->id]);
+        $detailSetting = LedgerAggregationSetting::factory()->make(['ledger_id' => $ledger->id]);
         return CreateLedgerRequest::make([
             ...$ledger->toArray(),
             'unit' => $unit->toArray(),
+            'detail_setting' => $detailSetting->toArray(),
             ...$params
         ]);
     }
